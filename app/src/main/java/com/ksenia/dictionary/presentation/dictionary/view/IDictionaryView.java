@@ -6,5 +6,5 @@ package com.ksenia.dictionary.presentation.dictionary.view;
 
 public interface IDictionaryView {
 
-    void addWordToList(String word);
+	void addNewWord(String word);
 }

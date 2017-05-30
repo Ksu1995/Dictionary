@@ -1,6 +1,6 @@
 package com.ksenia.dictionary.presentation.dictionary.view;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
@@ -16,7 +16,7 @@ import javax.inject.Inject;
 public class DictionaryFragment extends Fragment implements IDictionaryView {
 
     @Inject
-    IDictionaryPresenter mProfilePresenter;
+    IDictionaryPresenter mDictionaryPresenter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -27,6 +27,6 @@ public class DictionaryFragment extends Fragment implements IDictionaryView {
 
     @Override
     public void addWordToList(String word) {
-
+        mDictionaryPresenter.translateNewWord();
     }
 }
