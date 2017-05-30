@@ -13,6 +13,10 @@ public class DictionaryPresenter implements IDictionaryPresenter {
 
 	private IDictionaryView mDictionaryView;
 
+	public DictionaryPresenter(IDictionaryInteractor dictionaryInteractor) {
+		mDictionaryInteractor = dictionaryInteractor;
+	}
+
 	@Override
 	public void bindView(IDictionaryView dictionaryView) {
 		mDictionaryView = dictionaryView;

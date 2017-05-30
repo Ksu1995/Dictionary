@@ -11,15 +11,14 @@ import rx.Single;
 
 public class DictionaryInteractor implements IDictionaryInteractor {
 
-    private IDictionaryRepository mDictionaryRepository;
+	private IDictionaryRepository mDictionaryRepository;
 
-    public DictionaryInteractor(IDictionaryRepository dictionaryRepository) {
-        mDictionaryRepository = dictionaryRepository;
-    }
+	public DictionaryInteractor(IDictionaryRepository dictionaryRepository) {
+		mDictionaryRepository = dictionaryRepository;
+	}
 
-
-    @Override
-    public Single<WordTranslationModel> getWordTranslation() {
-        return mDictionaryRepository.getWordTranslation().onErrorReturn(throwable -> null);
-    }
+	@Override
+	public Single<WordTranslationModel> getWordTranslation() {
+		return null;//mDictionaryRepository.getWordTranslation().onErrorReturn(throwable -> null);
+	}
 }

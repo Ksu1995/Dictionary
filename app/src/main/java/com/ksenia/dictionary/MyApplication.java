@@ -4,6 +4,10 @@ import android.app.Application;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.ksenia.dictionary.di.app.AppComponent;
+import com.ksenia.dictionary.di.app.AppModule;
+import com.ksenia.dictionary.di.app.DaggerAppComponent;
+
 /**
  * Created by Ksenia on 29.05.2017.
  */
@@ -21,7 +25,7 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        appComponent = prepareAppComponent().build();
+		mAppComponent = prepareAppComponent().build();
     }
 
     @NonNull
@@ -32,6 +36,6 @@ public class MyApplication extends Application {
 
     @NonNull
     public AppComponent applicationComponent() {
-        return appComponent;
+        return mAppComponent;
     }
 }
