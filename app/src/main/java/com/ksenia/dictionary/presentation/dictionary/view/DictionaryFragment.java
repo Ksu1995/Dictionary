@@ -26,7 +26,7 @@ public class DictionaryFragment extends Fragment implements IDictionaryView {
     }
 
     @Override
-    public void addWordToList(String word) {
+    public void addNewWord(String word) {
         mDictionaryPresenter.translateNewWord();
     }
 }
