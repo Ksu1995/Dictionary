@@ -28,7 +28,7 @@ public class DictionaryPresenter implements IDictionaryPresenter {
 	}
 
 	@Override
-	public void translateNewWord() {
+	public void clickAddNewWord() {
 
 	}
 }

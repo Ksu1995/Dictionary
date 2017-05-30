@@ -5,4 +5,12 @@ package com.ksenia.dictionary.data.model;
  */
 
 public class WordTranslationModel {
+	public String mWord;
+	public String mTranslation;
+
+	public WordTranslationModel(String word, String translation) {
+		mWord = word;
+		mTranslation = translation;
+	}
+
 }

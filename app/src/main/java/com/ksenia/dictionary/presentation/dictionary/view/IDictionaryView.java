@@ -7,4 +7,5 @@ package com.ksenia.dictionary.presentation.dictionary.view;
 public interface IDictionaryView {
 
 	void addNewWord(String word);
+
 }
