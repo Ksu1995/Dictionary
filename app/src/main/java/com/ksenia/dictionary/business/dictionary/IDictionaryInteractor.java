@@ -11,6 +11,7 @@ import rx.Single;
 
 public interface IDictionaryInteractor {
 
-    Single<WordTranslation> getWordTranslation();
+    Single<WordTranslation> getWordTranslation(String word);
+    void saveWordTranslation(WordTranslation wordTranslation);
 
 }

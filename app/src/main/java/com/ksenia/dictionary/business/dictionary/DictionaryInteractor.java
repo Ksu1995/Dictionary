@@ -19,7 +19,13 @@ public class DictionaryInteractor implements IDictionaryInteractor {
 	}
 
 	@Override
-	public Single<WordTranslation> getWordTranslation() {
-		return mDictionaryRepository.getWordTranslation();//.onErrorReturn(throwable -> null/*Log.e("a", throwable.getLocalizedMessage()*/);
+	public Single<WordTranslation> getWordTranslation(String word) {
+		return mDictionaryRepository.getWordTranslation(word);//.onErrorReturn(throwable -> null/*Log.e("a", throwable.getLocalizedMessage()*/);
 	}
+
+	@Override
+	public void saveWordTranslation(WordTranslation wordTranslation) {
+		mDictionaryRepository.saveWordTranslation(wordTranslation);
+	}
+
 }

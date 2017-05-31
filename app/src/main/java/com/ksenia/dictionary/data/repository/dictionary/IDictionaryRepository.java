@@ -9,5 +9,7 @@ import rx.Single;
 
 public interface IDictionaryRepository {
 
-	Single<WordTranslation> getWordTranslation();
+	Single<WordTranslation> getWordTranslation(String word);
+
+	void saveWordTranslation(WordTranslation wordTranslation);
 }

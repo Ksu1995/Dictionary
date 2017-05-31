@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.ksenia.dictionary.MyApplication;
@@ -35,6 +36,7 @@ public class DictionaryFragment extends Fragment implements IDictionaryView {
 
 	private List<WordTranslationModel> mWordList;
 	private WordListAdapter mWordListAdapter;
+	private EditText mWordEditText;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,11 +51,11 @@ public class DictionaryFragment extends Fragment implements IDictionaryView {
 		View view = inflater.inflate(R.layout.dictionary_fragment, container, false);
 		FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
 		fab.setOnClickListener(view1 -> {
-
-			mDictionaryPresenter.clickAddNewWord();
+			addNewWord(mWordEditText.getText().toString());
 			Snackbar.make(view1, "Replace with your own action", Snackbar.LENGTH_LONG)
 					.setAction("Action", null).show();
 		});
+		mWordEditText = (EditText) view.findViewById(R.id.new_word);
 		mWordList = new ArrayList<>();
 		RecyclerView wordList = (RecyclerView) view.findViewById(R.id.word_list);
 		wordList.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -71,12 +73,12 @@ public class DictionaryFragment extends Fragment implements IDictionaryView {
 
 	@Override
 	public void addNewWord(String word) {
-		mDictionaryPresenter.clickAddNewWord();
+		mDictionaryPresenter.clickAddNewWord(word);
 	}
 
 	@Override
-	public void setNewWord(String word) {
-		mWordList.add(new WordTranslationModel(word, word));
+	public void setNewWord(WordTranslationModel word) {
+		mWordList.add(word);
 		mWordListAdapter.notifyDataSetChanged();
 	}
 

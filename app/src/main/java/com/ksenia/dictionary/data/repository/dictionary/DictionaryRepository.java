@@ -23,10 +23,14 @@ public class DictionaryRepository implements IDictionaryRepository {
 				.build();
 	}
 
+	@Override
+	public Single<WordTranslation> getWordTranslation(String word) {
+		IIDictionaryRepository weatherService = mRetrofit.create(IIDictionaryRepository.class);
+		return weatherService.translateWord("trnsl.1.1.20170530T132550Z.856fb0e22726f7be.6b55b7908badee4e4b7ebd4dd5ca03c824a438d2", word, "ru");
+	}
 
 	@Override
-	public Single<WordTranslation> getWordTranslation() {
-		IIDictionaryRepository weatherService = mRetrofit.create(IIDictionaryRepository.class);
-		return weatherService.translateWord("trnsl.1.1.20170530T132550Z.856fb0e22726f7be.6b55b7908badee4e4b7ebd4dd5ca03c824a438d2", "mother", "en");
+	public void saveWordTranslation(WordTranslation wordTranslation) {
+
 	}
 }

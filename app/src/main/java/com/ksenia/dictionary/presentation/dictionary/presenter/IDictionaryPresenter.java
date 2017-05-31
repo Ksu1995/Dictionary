@@ -11,5 +11,5 @@ public interface IDictionaryPresenter {
     void bindView(IDictionaryView dictionaryView);
     void unbindView();
 
-    void clickAddNewWord();
+    void clickAddNewWord(String word);
 }
