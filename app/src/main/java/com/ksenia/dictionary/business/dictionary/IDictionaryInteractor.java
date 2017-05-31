@@ -1,6 +1,7 @@
 package com.ksenia.dictionary.business.dictionary;
 
 import com.ksenia.dictionary.data.model.WordTranslationModel;
+import com.ksenia.dictionary.data.network.data.WordTranslation;
 
 import rx.Single;
 
@@ -10,6 +11,6 @@ import rx.Single;
 
 public interface IDictionaryInteractor {
 
-    Single<WordTranslationModel> getWordTranslation();
+    Single<WordTranslation> getWordTranslation();
 
 }

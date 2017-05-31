@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import com.ksenia.dictionary.MyApplication;
 import com.ksenia.dictionary.R;
 import com.ksenia.dictionary.data.model.WordTranslationModel;
@@ -19,7 +20,6 @@ import com.ksenia.dictionary.di.dictionary.DictionaryModule;
 import com.ksenia.dictionary.presentation.dictionary.presenter.IDictionaryPresenter;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -33,7 +33,8 @@ public class DictionaryFragment extends Fragment implements IDictionaryView {
 	@Inject
 	IDictionaryPresenter mDictionaryPresenter;
 
-	private RecyclerView mWordList;
+	private List<WordTranslationModel> mWordList;
+	private WordListAdapter mWordListAdapter;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,19 +48,17 @@ public class DictionaryFragment extends Fragment implements IDictionaryView {
 							 Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.dictionary_fragment, container, false);
 		FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
-		fab.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				mDictionaryPresenter.clickAddNewWord();
-				Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-						.setAction("Action", null).show();
-			}
+		fab.setOnClickListener(view1 -> {
+
+			mDictionaryPresenter.clickAddNewWord();
+			Snackbar.make(view1, "Replace with your own action", Snackbar.LENGTH_LONG)
+					.setAction("Action", null).show();
 		});
-		mWordList = (RecyclerView) view.findViewById(R.id.word_list);
-		mWordList.setLayoutManager(new LinearLayoutManager(getContext()));
-		List<WordTranslationModel> strings = new ArrayList<>();
-		Collections.addAll(strings,new WordTranslationModel("a", "bb"));
-		mWordList.setAdapter(new WordListAdapter(strings));
+		mWordList = new ArrayList<>();
+		RecyclerView wordList = (RecyclerView) view.findViewById(R.id.word_list);
+		wordList.setLayoutManager(new LinearLayoutManager(getContext()));
+		mWordListAdapter = new WordListAdapter(mWordList);
+		wordList.setAdapter(mWordListAdapter);
 		mDictionaryPresenter.bindView(this);
 		return view;
 	}
@@ -75,11 +74,18 @@ public class DictionaryFragment extends Fragment implements IDictionaryView {
 		mDictionaryPresenter.clickAddNewWord();
 	}
 
-	public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.WordViewHolder> {
+	@Override
+	public void setNewWord(String word) {
+		mWordList.add(new WordTranslationModel(word, word));
+		mWordListAdapter.notifyDataSetChanged();
+	}
+
+
+	class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.WordViewHolder> {
 
 		List<WordTranslationModel> mWordList;
 
-		public WordListAdapter(List<WordTranslationModel> wordList) {
+		WordListAdapter(List<WordTranslationModel> wordList) {
 			mWordList = wordList;
 		}
 
@@ -92,8 +98,8 @@ public class DictionaryFragment extends Fragment implements IDictionaryView {
 
 		@Override
 		public void onBindViewHolder(WordViewHolder holder, int position) {
-			holder.personName.setText(mWordList.get(position).mWord);
-			holder.personAge.setText(mWordList.get(position).mTranslation);
+			holder.mWord.setText(mWordList.get(position).mWord);
+			holder.mTranslation.setText(mWordList.get(position).mTranslation);
 		}
 
 		@Override
@@ -101,14 +107,14 @@ public class DictionaryFragment extends Fragment implements IDictionaryView {
 			return mWordList.size();
 		}
 
-		public class WordViewHolder extends RecyclerView.ViewHolder {
-			TextView personName;
-			TextView personAge;
+		class WordViewHolder extends RecyclerView.ViewHolder {
+			TextView mWord;
+			TextView mTranslation;
 
 			WordViewHolder(View itemView) {
 				super(itemView);
-				personName = (TextView) itemView.findViewById(R.id.person_name);
-				personAge = (TextView) itemView.findViewById(R.id.person_age);
+				mWord = (TextView) itemView.findViewById(R.id.person_name);
+				mTranslation = (TextView) itemView.findViewById(R.id.person_age);
 			}
 		}
 	}

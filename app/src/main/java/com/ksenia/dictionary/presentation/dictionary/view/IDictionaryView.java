@@ -8,4 +8,6 @@ public interface IDictionaryView {
 
 	void addNewWord(String word);
 
+	void setNewWord(String word);
+
 }

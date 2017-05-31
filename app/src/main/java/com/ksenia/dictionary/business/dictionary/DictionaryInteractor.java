@@ -1,6 +1,7 @@
 package com.ksenia.dictionary.business.dictionary;
 
-import com.ksenia.dictionary.data.model.WordTranslationModel;
+
+import com.ksenia.dictionary.data.network.data.WordTranslation;
 import com.ksenia.dictionary.data.repository.dictionary.IDictionaryRepository;
 
 import rx.Single;
@@ -18,7 +19,7 @@ public class DictionaryInteractor implements IDictionaryInteractor {
 	}
 
 	@Override
-	public Single<WordTranslationModel> getWordTranslation() {
-		return null;//mDictionaryRepository.getWordTranslation().onErrorReturn(throwable -> null);
+	public Single<WordTranslation> getWordTranslation() {
+		return mDictionaryRepository.getWordTranslation();//.onErrorReturn(throwable -> null/*Log.e("a", throwable.getLocalizedMessage()*/);
 	}
 }
