@@ -38,9 +38,16 @@ public class DictionaryPresenter implements IDictionaryPresenter {
 		mDictionaryInteractor.getWordTranslation(word).subscribeOn(Schedulers.newThread())
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(wordData -> {
-					mDictionaryView.setNewWord(new WordTranslationModel(word, wordData.getTranslation()[0]));
-					mDictionaryInteractor.saveWordTranslation(wordData);
-					Log.e("Current word", wordData.getTranslation()[0]);
+					wordData.setWord(word);
+					if (mDictionaryInteractor.saveWordTranslation(wordData)) {
+						mDictionaryView.setNewWord(new WordTranslationModel(word, wordData.getTranslation()[0]));
+						Log.e("Current word", wordData.getTranslation()[0]);
+					}
 				});
+	}
+
+	@Override
+	public void loadDictionary() {
+		mDictionaryView.updateWordList(mDictionaryInteractor.getDictionary());
 	}
 }

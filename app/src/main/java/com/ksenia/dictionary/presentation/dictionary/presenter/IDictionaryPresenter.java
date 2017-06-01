@@ -12,4 +12,5 @@ public interface IDictionaryPresenter {
     void unbindView();
 
     void clickAddNewWord(String word);
+    void loadDictionary();
 }

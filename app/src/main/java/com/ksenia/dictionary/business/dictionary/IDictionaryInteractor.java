@@ -3,6 +3,8 @@ package com.ksenia.dictionary.business.dictionary;
 import com.ksenia.dictionary.data.model.WordTranslationModel;
 import com.ksenia.dictionary.data.network.data.WordTranslation;
 
+import java.util.List;
+
 import rx.Single;
 
 /**
@@ -11,7 +13,10 @@ import rx.Single;
 
 public interface IDictionaryInteractor {
 
-    Single<WordTranslation> getWordTranslation(String word);
-    void saveWordTranslation(WordTranslation wordTranslation);
+	Single<WordTranslation> getWordTranslation(String word);
+
+	boolean saveWordTranslation(WordTranslation wordTranslation);
+
+	List<WordTranslationModel> getDictionary();
 
 }

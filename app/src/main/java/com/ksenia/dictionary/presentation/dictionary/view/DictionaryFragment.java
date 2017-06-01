@@ -62,6 +62,7 @@ public class DictionaryFragment extends Fragment implements IDictionaryView {
 		mWordListAdapter = new WordListAdapter(mWordList);
 		wordList.setAdapter(mWordListAdapter);
 		mDictionaryPresenter.bindView(this);
+		mDictionaryPresenter.loadDictionary();
 		return view;
 	}
 
@@ -82,6 +83,11 @@ public class DictionaryFragment extends Fragment implements IDictionaryView {
 		mWordListAdapter.notifyDataSetChanged();
 	}
 
+	@Override
+	public void updateWordList(List<WordTranslationModel> words) {
+		mWordList.clear();
+		mWordList.addAll(words);
+	}
 
 	class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.WordViewHolder> {
 

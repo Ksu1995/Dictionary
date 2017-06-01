@@ -1,8 +1,11 @@
 package com.ksenia.dictionary.business.dictionary;
 
 
+import com.ksenia.dictionary.data.model.WordTranslationModel;
 import com.ksenia.dictionary.data.network.data.WordTranslation;
 import com.ksenia.dictionary.data.repository.dictionary.IDictionaryRepository;
+
+import java.util.List;
 
 import rx.Single;
 
@@ -24,8 +27,14 @@ public class DictionaryInteractor implements IDictionaryInteractor {
 	}
 
 	@Override
-	public void saveWordTranslation(WordTranslation wordTranslation) {
+	public boolean saveWordTranslation(WordTranslation wordTranslation) {
 		mDictionaryRepository.saveWordTranslation(wordTranslation);
+		return true;
+	}
+
+	@Override
+	public List<WordTranslationModel> getDictionary() {
+		return mDictionaryRepository.getDictionary();
 	}
 
 }

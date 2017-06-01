@@ -1,5 +1,7 @@
 package com.ksenia.dictionary.di.dictionary;
 
+import android.content.Context;
+
 import com.ksenia.dictionary.business.dictionary.DictionaryInteractor;
 import com.ksenia.dictionary.business.dictionary.IDictionaryInteractor;
 import com.ksenia.dictionary.data.repository.dictionary.DictionaryRepository;
@@ -17,8 +19,8 @@ import dagger.Provides;
 public class DictionaryModule {
 
 	@Provides
-	IDictionaryRepository provideDictionaryRepository() {
-		return new DictionaryRepository();
+	IDictionaryRepository provideDictionaryRepository(Context context) {
+		return new DictionaryRepository(context);
 	}
 
 	@Provides

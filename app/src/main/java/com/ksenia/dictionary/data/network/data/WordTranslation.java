@@ -10,7 +10,7 @@ public class WordTranslation extends TranslationResponse {
 
 	private String mLanguage;
 	private String[] mTranslation;
-	//private String mWord;
+	private String mWord;
 
 	public String getLanguage() {
 		return mLanguage;
@@ -28,5 +28,13 @@ public class WordTranslation extends TranslationResponse {
 	@JsonSetter("text")
 	public void setTranslation(String[] translation) {
 		mTranslation = translation;
+	}
+
+	public String getWord() {
+		return mWord;
+	}
+
+	public void setWord(String word) {
+		mWord = word;
 	}
 }

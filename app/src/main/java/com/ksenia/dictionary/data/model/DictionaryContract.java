@@ -8,16 +8,18 @@ import android.provider.BaseColumns;
 public final class DictionaryContract {
 	static final String SQL_CREATE_ENTRIES =
 			"CREATE TABLE " + DictionaryEntry.TABLE_NAME + " (" +
-					DictionaryEntry._ID + " INTEGER PRIMARY KEY," +
+					//DictionaryEntry._ID + " INTEGER PRIMARY KEY," +
 					DictionaryEntry.COLUMN_WORD + " TEXT," +
 					DictionaryEntry.COLUMN_TRANSLATION + " TEXT," +
 					DictionaryEntry.COLUMN_LANGUAGE + " TEXT," +
-					DictionaryEntry.COLUMN_FAVOURITE + " INTEGER)";
+					DictionaryEntry.COLUMN_FAVOURITE +
+					" INTEGER, PRIMARY KEY (" + DictionaryEntry.COLUMN_WORD + "," + DictionaryEntry.COLUMN_LANGUAGE + "))";
 
 	static final String SQL_DELETE_ENTRIES =
 			"DROP TABLE IF EXISTS " + DictionaryEntry.TABLE_NAME;
 
-	private DictionaryContract() {}
+	private DictionaryContract() {
+	}
 
 	public static class DictionaryEntry implements BaseColumns {
 		public static final String TABLE_NAME = "dictionary";
