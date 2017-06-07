@@ -7,6 +7,7 @@ import com.ksenia.dictionary.data.repository.dictionary.IDictionaryRepository;
 
 import java.util.List;
 
+import rx.Observable;
 import rx.Single;
 
 /**
@@ -33,7 +34,7 @@ public class DictionaryInteractor implements IDictionaryInteractor {
 	}
 
 	@Override
-	public List<WordTranslationModel> getDictionary() {
+	public Observable<List<WordTranslationModel>> getDictionary() {
 		return mDictionaryRepository.getDictionary();
 	}
 

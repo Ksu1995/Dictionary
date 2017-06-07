@@ -40,7 +40,7 @@ public class DictionaryPresenter implements IDictionaryPresenter {
 				.subscribe(wordData -> {
 					wordData.setWord(word);
 					if (mDictionaryInteractor.saveWordTranslation(wordData)) {
-						mDictionaryView.setNewWord(new WordTranslationModel(word, wordData.getTranslation()[0]));
+						mDictionaryView.setNewWord(WordTranslationModel.newWordTranslationModel(word, wordData.getTranslation()[0]));
 						Log.e("Current word", wordData.getTranslation()[0]);
 					}
 				});
@@ -48,6 +48,10 @@ public class DictionaryPresenter implements IDictionaryPresenter {
 
 	@Override
 	public void loadDictionary() {
-		mDictionaryView.updateWordList(mDictionaryInteractor.getDictionary());
+		mDictionaryInteractor.getDictionary().subscribeOn(Schedulers.newThread())
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribe(dictionary -> {
+					mDictionaryView.updateWordList(dictionary);
+				});
 	}
 }

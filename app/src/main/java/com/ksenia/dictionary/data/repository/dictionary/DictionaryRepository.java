@@ -1,26 +1,27 @@
 package com.ksenia.dictionary.data.repository.dictionary;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.ksenia.dictionary.data.model.DictionaryContract;
 import com.ksenia.dictionary.data.model.DictionaryDbHelper;
 import com.ksenia.dictionary.data.model.WordTranslationModel;
+//import com.ksenia.dictionary.data.model.WordTranslationModelDeleteResolver;
+//import com.ksenia.dictionary.data.model.WordTranslationModelGetResolver;
+//import com.ksenia.dictionary.data.model.WordTranslationModelPutResolver;
 import com.ksenia.dictionary.data.network.data.WordTranslation;
+import com.pushtorefresh.storio.sqlite.SQLiteTypeMapping;
+import com.pushtorefresh.storio.sqlite.StorIOSQLite;
+import com.pushtorefresh.storio.sqlite.impl.DefaultStorIOSQLite;
+import com.pushtorefresh.storio.sqlite.queries.Query;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 import rx.Observable;
 import rx.Single;
-import rx.Subscriber;
+//import com.ksenia.dictionary.data.model.WordTranslationModelSQLiteTypeMapping;
 
 /**
  * Created by Samsonova_K on 30.05.2017.
@@ -31,6 +32,7 @@ public class DictionaryRepository implements IDictionaryRepository {
 	private Retrofit mRetrofit;
 	private DictionaryDbHelper mDbHelper;
 	private Context mContext;
+	private StorIOSQLite mStorIOSQLite;
 
 	public DictionaryRepository(Context context) {
 		mRetrofit = new Retrofit.Builder()
@@ -40,6 +42,13 @@ public class DictionaryRepository implements IDictionaryRepository {
 				.build();
 		mContext = context;
 		mDbHelper = new DictionaryDbHelper(mContext);
+		/*mStorIOSQLite = DefaultStorIOSQLite.builder()
+				.sqliteOpenHelper(mDbHelper).addTypeMapping(WordTranslationModel.class, SQLiteTypeMapping.<WordTranslationModel>builder()
+						.putResolver(new WordTranslationModelPutResolver()) // object that knows how to perform Put Operation (insert or update)
+						.getResolver(new WordTranslationModelGetResolver()) // object that knows how to perform Get Operation
+						.deleteResolver(new WordTranslationModelDeleteResolver())  // object that knows how to perform Delete Operation
+						.build())
+				.build();*/
 	}
 
 	@Override
@@ -50,27 +59,40 @@ public class DictionaryRepository implements IDictionaryRepository {
 
 	@Override
 	public void saveWordTranslation(WordTranslation wordTranslation) {
-		SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+		mStorIOSQLite
+				.put() // Insert or Update
+				.object(WordTranslationModel.newWordTranslationModel(wordTranslation.getWord(), wordTranslation.getTranslation()[0])) // Type mapping!
+				.prepare()
+				.executeAsBlocking();
+		/*SQLiteDatabase db = mDbHelper.getWritableDatabase();
 		ContentValues values = new ContentValues();
 		values.put(DictionaryContract.DictionaryEntry.COLUMN_WORD, wordTranslation.getWord());
 		values.put(DictionaryContract.DictionaryEntry.COLUMN_TRANSLATION, wordTranslation.getTranslation()[0]);
 		values.put(DictionaryContract.DictionaryEntry.COLUMN_LANGUAGE, wordTranslation.getLanguage());
 		values.put(DictionaryContract.DictionaryEntry.COLUMN_FAVOURITE, 0);
 		// Insert the new row, returning the primary key value of the new row
-		long newRowId = db.insert(DictionaryContract.DictionaryEntry.TABLE_NAME, null, values);
+		long newRowId = db.insert(DictionaryContract.DictionaryEntry.TABLE_NAME, null, values);*/
 	}
 
 	@Override
-	public List<WordTranslationModel> getDictionary() {
-		SQLiteDatabase db = mDbHelper.getReadableDatabase();
+	public Observable<List<WordTranslationModel>> getDictionary() {
+		return mStorIOSQLite
+				.get()
+				.listOfObjects(WordTranslationModel.class)
+				.withQuery(Query.builder()
+						.table(DictionaryContract.DictionaryEntry.TABLE_NAME)
+						.build())
+				.prepare()
+				.asRxObservable(); // Get Result as rx.Observable and subscribe to further updates of tables from Query!
+
+		/*SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
 		String[] projection = {
 				DictionaryContract.DictionaryEntry.COLUMN_WORD,
 				DictionaryContract.DictionaryEntry.COLUMN_TRANSLATION,
-				//DictionaryContract.DictionaryEntry.COLUMN_NAME_SUBTITLE
 		};
 
-// How you want the results sorted in the resulting Cursor
 		String sortOrder =
 				DictionaryContract.DictionaryEntry.COLUMN_WORD + " DESC";
 
@@ -91,20 +113,8 @@ public class DictionaryRepository implements IDictionaryRepository {
 					cursor.getColumnIndexOrThrow(DictionaryContract.DictionaryEntry.COLUMN_TRANSLATION));
 			wordList.add(new WordTranslationModel(word, translation));
 		}
-		cursor.close();
+		cursor.close();*/
 
-		return wordList;
+		//return wordList;
 	}
-
-	private static <T> Observable<T> makeObservable(final Callable<T> func) {
-		return Observable.create(
-				subscriber -> {
-					try {
-						subscriber.onNext(func.call());
-					} catch(Exception ex) {
-						Log.e("TAG", "Error reading from the database", ex);
-					}
-				});
-	}
-
 }

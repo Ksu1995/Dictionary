@@ -106,8 +106,8 @@ public class DictionaryFragment extends Fragment implements IDictionaryView {
 
 		@Override
 		public void onBindViewHolder(WordViewHolder holder, int position) {
-			holder.mWord.setText(mWordList.get(position).mWord);
-			holder.mTranslation.setText(mWordList.get(position).mTranslation);
+			holder.mWord.setText(mWordList.get(position).getWord());
+			holder.mTranslation.setText(mWordList.get(position).getTranslation());
 		}
 
 		@Override
