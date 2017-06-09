@@ -43,8 +43,12 @@ public class DictionaryPresenter implements IDictionaryPresenter {
 						mDictionaryView.setNewWord(WordTranslationModel.newWordTranslationModel(word, wordData.getTranslation()[0], wordData.getLanguage()));
 						Log.e("Current word", wordData.getTranslation()[0]);
 					}
-				});
+				}, this::handleErrorTranslateWord);
 	}
+	private void handleErrorTranslateWord(Throwable throwable) {
+		mDictionaryView.showError();
+	}
+
 
 	@Override
 	public void loadDictionary() {

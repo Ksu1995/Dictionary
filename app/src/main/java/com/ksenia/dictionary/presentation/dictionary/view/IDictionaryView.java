@@ -16,4 +16,6 @@ public interface IDictionaryView {
 
 	void updateWordList(List<WordTranslationModel> words);
 
+	void showError();
+
 }

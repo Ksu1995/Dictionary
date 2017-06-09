@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -56,11 +57,7 @@ public class DictionaryFragment extends Fragment implements IDictionaryView {
 							 Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.dictionary_fragment, container, false);
 		FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
-		fab.setOnClickListener(view1 -> {
-			addNewWord(mWordEditText.getText().toString(), mCurrentLang);
-			Snackbar.make(view1, "Replace with your own action", Snackbar.LENGTH_LONG)
-					.setAction("Action", null).show();
-		});
+		fab.setOnClickListener(view1 -> addNewWord(mWordEditText.getText().toString(), mCurrentLang));
 		mWordEditText = (EditText) view.findViewById(R.id.new_word);
 		mWordList = new ArrayList<>();
 		RecyclerView wordList = (RecyclerView) view.findViewById(R.id.word_list);
@@ -112,6 +109,12 @@ public class DictionaryFragment extends Fragment implements IDictionaryView {
 		mWordList.addAll(words);
 	}
 
+	@Override
+	public void showError() {
+		Snackbar.make(getView(), "Error!!!", Snackbar.LENGTH_LONG)
+				.setAction("Action", null).show();
+	}
+
 	class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.WordViewHolder> {
 
 		List<WordTranslationModel> mWordList;
@@ -140,11 +143,19 @@ public class DictionaryFragment extends Fragment implements IDictionaryView {
 		class WordViewHolder extends RecyclerView.ViewHolder {
 			TextView mWord;
 			TextView mTranslation;
+			ImageButton mFavouriteButton;
 
 			WordViewHolder(View itemView) {
 				super(itemView);
 				mWord = (TextView) itemView.findViewById(R.id.person_name);
 				mTranslation = (TextView) itemView.findViewById(R.id.person_age);
+				mFavouriteButton = (ImageButton) itemView.findViewById(R.id.favorite);
+				mFavouriteButton.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						mFavouriteButton.setImageDrawable(itemView.getContext().getDrawable(android.R.drawable.star_big_on));
+					}
+				});
 			}
 		}
 	}

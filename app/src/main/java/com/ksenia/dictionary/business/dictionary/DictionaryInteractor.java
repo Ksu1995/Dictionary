@@ -26,11 +26,14 @@ public class DictionaryInteractor implements IDictionaryInteractor {
 
 	@Override
 	public Single<WordTranslation> getWordTranslation(@NonNull String word, String langTo) {
-		/*if (word.isEmpty()) {
-			throw new DictionaryInteractorException("Empty word to translate");
-		}*/
-		return mDictionaryRepository.getWordTranslation(word, langTo);//.onErrorResumeNext(throwable -> Observable.error(
-				//new DictionaryInteractorException("Incorrect personal info"))).toSingle();//.doOnError(on->throw new DictionaryInteractorException());
+		return mDictionaryRepository.getWordTranslation(word, langTo).map(wordTranslation -> {
+			if (wordTranslation.getResponseCode() != 200) {
+				throw new DictionaryInteractorException("Responsecode = "+ wordTranslation.getResponseCode());
+			} else {
+				return wordTranslation;
+			}
+		}).toObservable().onErrorResumeNext(throwable -> Observable.error(
+				new DictionaryInteractorException("Incorrect personal info"))).toSingle();
 	}
 
 	@Override
