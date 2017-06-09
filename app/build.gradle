@@ -57,7 +57,7 @@ dependencies {
     // If you need StorIO for SQLite
     compile 'com.pushtorefresh.storio:sqlite:1.13.0'
     compile 'com.pushtorefresh.storio:sqlite-annotations:1.13.0'
-    //annotationProcessor 'com.pushtorefresh.storio:1.13.0'
+    annotationProcessor 'com.pushtorefresh.storio:sqlite-annotations-processor:1.13.0'
     // dagger2
     compile 'com.google.dagger:dagger:2.0'
     provided 'com.google.dagger:dagger-compiler:2.0'

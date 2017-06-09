@@ -8,7 +8,6 @@ import android.provider.BaseColumns;
 public final class DictionaryContract {
 	static final String SQL_CREATE_ENTRIES =
 			"CREATE TABLE " + DictionaryEntry.TABLE_NAME + " (" +
-					//DictionaryEntry._ID + " INTEGER PRIMARY KEY," +
 					DictionaryEntry.COLUMN_WORD + " TEXT," +
 					DictionaryEntry.COLUMN_TRANSLATION + " TEXT," +
 					DictionaryEntry.COLUMN_LANGUAGE + " TEXT," +

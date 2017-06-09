@@ -5,9 +5,9 @@ import android.content.Context;
 import com.ksenia.dictionary.data.model.DictionaryContract;
 import com.ksenia.dictionary.data.model.DictionaryDbHelper;
 import com.ksenia.dictionary.data.model.WordTranslationModel;
-//import com.ksenia.dictionary.data.model.WordTranslationModelDeleteResolver;
-//import com.ksenia.dictionary.data.model.WordTranslationModelGetResolver;
-//import com.ksenia.dictionary.data.model.WordTranslationModelPutResolver;
+import com.ksenia.dictionary.data.model.WordTranslationModelStorIOSQLiteDeleteResolver;
+import com.ksenia.dictionary.data.model.WordTranslationModelStorIOSQLiteGetResolver;
+import com.ksenia.dictionary.data.model.WordTranslationModelStorIOSQLitePutResolver;
 import com.ksenia.dictionary.data.network.data.WordTranslation;
 import com.pushtorefresh.storio.sqlite.SQLiteTypeMapping;
 import com.pushtorefresh.storio.sqlite.StorIOSQLite;
@@ -21,7 +21,6 @@ import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 import rx.Observable;
 import rx.Single;
-//import com.ksenia.dictionary.data.model.WordTranslationModelSQLiteTypeMapping;
 
 /**
  * Created by Samsonova_K on 30.05.2017.
@@ -42,13 +41,13 @@ public class DictionaryRepository implements IDictionaryRepository {
 				.build();
 		mContext = context;
 		mDbHelper = new DictionaryDbHelper(mContext);
-		/*mStorIOSQLite = DefaultStorIOSQLite.builder()
+		mStorIOSQLite = DefaultStorIOSQLite.builder()
 				.sqliteOpenHelper(mDbHelper).addTypeMapping(WordTranslationModel.class, SQLiteTypeMapping.<WordTranslationModel>builder()
-						.putResolver(new WordTranslationModelPutResolver()) // object that knows how to perform Put Operation (insert or update)
-						.getResolver(new WordTranslationModelGetResolver()) // object that knows how to perform Get Operation
-						.deleteResolver(new WordTranslationModelDeleteResolver())  // object that knows how to perform Delete Operation
+						.putResolver(new WordTranslationModelStorIOSQLitePutResolver()) // object that knows how to perform Put Operation (insert or update)
+						.getResolver(new WordTranslationModelStorIOSQLiteGetResolver()) // object that knows how to perform Get Operation
+						.deleteResolver(new WordTranslationModelStorIOSQLiteDeleteResolver())  // object that knows how to perform Delete Operation
 						.build())
-				.build();*/
+				.build();
 	}
 
 	@Override
