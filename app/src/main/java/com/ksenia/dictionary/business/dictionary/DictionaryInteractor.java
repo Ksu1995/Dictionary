@@ -1,6 +1,8 @@
 package com.ksenia.dictionary.business.dictionary;
 
 
+import android.support.annotation.NonNull;
+
 import com.ksenia.dictionary.data.model.WordTranslationModel;
 import com.ksenia.dictionary.data.network.data.WordTranslation;
 import com.ksenia.dictionary.data.repository.dictionary.IDictionaryRepository;
@@ -23,14 +25,17 @@ public class DictionaryInteractor implements IDictionaryInteractor {
 	}
 
 	@Override
-	public Single<WordTranslation> getWordTranslation(String word) {
-		return mDictionaryRepository.getWordTranslation(word);//.onErrorReturn(throwable -> null/*Log.e("a", throwable.getLocalizedMessage()*/);
+	public Single<WordTranslation> getWordTranslation(@NonNull String word, String langTo) {
+		/*if (word.isEmpty()) {
+			throw new DictionaryInteractorException("Empty word to translate");
+		}*/
+		return mDictionaryRepository.getWordTranslation(word, langTo);//.onErrorResumeNext(throwable -> Observable.error(
+				//new DictionaryInteractorException("Incorrect personal info"))).toSingle();//.doOnError(on->throw new DictionaryInteractorException());
 	}
 
 	@Override
 	public boolean saveWordTranslation(WordTranslation wordTranslation) {
-		mDictionaryRepository.saveWordTranslation(wordTranslation);
-		return true;
+		return mDictionaryRepository.saveWordTranslation(wordTranslation);
 	}
 
 	@Override

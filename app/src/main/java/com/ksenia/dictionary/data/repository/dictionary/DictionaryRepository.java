@@ -29,8 +29,6 @@ import rx.Single;
 public class DictionaryRepository implements IDictionaryRepository {
 
 	private Retrofit mRetrofit;
-	private DictionaryDbHelper mDbHelper;
-	private Context mContext;
 	private StorIOSQLite mStorIOSQLite;
 
 	public DictionaryRepository(Context context) {
@@ -39,81 +37,40 @@ public class DictionaryRepository implements IDictionaryRepository {
 				.addConverterFactory(JacksonConverterFactory.create())
 				.baseUrl("https://translate.yandex.net")
 				.build();
-		mContext = context;
-		mDbHelper = new DictionaryDbHelper(mContext);
+		DictionaryDbHelper dbHelper = new DictionaryDbHelper(context);
 		mStorIOSQLite = DefaultStorIOSQLite.builder()
-				.sqliteOpenHelper(mDbHelper).addTypeMapping(WordTranslationModel.class, SQLiteTypeMapping.<WordTranslationModel>builder()
-						.putResolver(new WordTranslationModelStorIOSQLitePutResolver()) // object that knows how to perform Put Operation (insert or update)
-						.getResolver(new WordTranslationModelStorIOSQLiteGetResolver()) // object that knows how to perform Get Operation
-						.deleteResolver(new WordTranslationModelStorIOSQLiteDeleteResolver())  // object that knows how to perform Delete Operation
+				.sqliteOpenHelper(dbHelper).addTypeMapping(WordTranslationModel.class, SQLiteTypeMapping.<WordTranslationModel>builder()
+						.putResolver(new WordTranslationModelStorIOSQLitePutResolver())
+						.getResolver(new WordTranslationModelStorIOSQLiteGetResolver())
+						.deleteResolver(new WordTranslationModelStorIOSQLiteDeleteResolver())
 						.build())
 				.build();
 	}
 
 	@Override
-	public Single<WordTranslation> getWordTranslation(String word) {
+	public Single<WordTranslation> getWordTranslation(String word, String langTo) {
 		IIDictionaryRepository weatherService = mRetrofit.create(IIDictionaryRepository.class);
-		return weatherService.translateWord("trnsl.1.1.20170530T132550Z.856fb0e22726f7be.6b55b7908badee4e4b7ebd4dd5ca03c824a438d2", word, "ru");
+		return weatherService.translateWord("trnsl.1.1.20170530T132550Z.856fb0e22726f7be.6b55b7908badee4e4b7ebd4dd5ca03c824a438d2", word, langTo);
 	}
 
 	@Override
-	public void saveWordTranslation(WordTranslation wordTranslation) {
-
-		mStorIOSQLite
-				.put() // Insert or Update
-				.object(WordTranslationModel.newWordTranslationModel(wordTranslation.getWord(), wordTranslation.getTranslation()[0])) // Type mapping!
+	public boolean saveWordTranslation(WordTranslation wordTranslation) {
+		return mStorIOSQLite.put()
+				.object(WordTranslationModel.newWordTranslationModel(wordTranslation.getWord(), wordTranslation.getTranslation()[0], wordTranslation.getLanguage()))
 				.prepare()
-				.executeAsBlocking();
-		/*SQLiteDatabase db = mDbHelper.getWritableDatabase();
-		ContentValues values = new ContentValues();
-		values.put(DictionaryContract.DictionaryEntry.COLUMN_WORD, wordTranslation.getWord());
-		values.put(DictionaryContract.DictionaryEntry.COLUMN_TRANSLATION, wordTranslation.getTranslation()[0]);
-		values.put(DictionaryContract.DictionaryEntry.COLUMN_LANGUAGE, wordTranslation.getLanguage());
-		values.put(DictionaryContract.DictionaryEntry.COLUMN_FAVOURITE, 0);
-		// Insert the new row, returning the primary key value of the new row
-		long newRowId = db.insert(DictionaryContract.DictionaryEntry.TABLE_NAME, null, values);*/
+				.executeAsBlocking().wasInserted();
 	}
 
 	@Override
 	public Observable<List<WordTranslationModel>> getDictionary() {
-		return mStorIOSQLite
-				.get()
+		return mStorIOSQLite.get()
 				.listOfObjects(WordTranslationModel.class)
 				.withQuery(Query.builder()
 						.table(DictionaryContract.DictionaryEntry.TABLE_NAME)
+						//.where(DictionaryContract.DictionaryEntry.COLUMN_WORD + " = ?")
+						//.whereArgs("and")
 						.build())
 				.prepare()
-				.asRxObservable(); // Get Result as rx.Observable and subscribe to further updates of tables from Query!
-
-		/*SQLiteDatabase db = mDbHelper.getReadableDatabase();
-
-		String[] projection = {
-				DictionaryContract.DictionaryEntry.COLUMN_WORD,
-				DictionaryContract.DictionaryEntry.COLUMN_TRANSLATION,
-		};
-
-		String sortOrder =
-				DictionaryContract.DictionaryEntry.COLUMN_WORD + " DESC";
-
-		Cursor cursor = db.query(
-				DictionaryContract.DictionaryEntry.TABLE_NAME,                     // The table to query
-				projection,                               // The columns to return
-				null,                                // The columns for the WHERE clause
-				null,                            // The values for the WHERE clause
-				null,                                     // don't group the rows
-				null,                                     // don't filter by row groups
-				sortOrder                                 // The sort order
-		);
-		List<WordTranslationModel> wordList = new ArrayList<>();
-		while(cursor.moveToNext()) {
-			String word = cursor.getString(
-					cursor.getColumnIndexOrThrow(DictionaryContract.DictionaryEntry.COLUMN_WORD));
-			String translation = cursor.getString(
-					cursor.getColumnIndexOrThrow(DictionaryContract.DictionaryEntry.COLUMN_TRANSLATION));
-			wordList.add(new WordTranslationModel(word, translation));
-		}
-		cursor.close();*/
-
-		//return wordList;
+				.asRxObservable();
 	}
 }

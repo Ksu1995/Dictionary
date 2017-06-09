@@ -34,13 +34,13 @@ public class DictionaryPresenter implements IDictionaryPresenter {
 	}
 
 	@Override
-	public void clickAddNewWord(String word) {
-		mDictionaryInteractor.getWordTranslation(word).subscribeOn(Schedulers.newThread())
+	public void clickAddNewWord(String word, String langTo) {
+		mDictionaryInteractor.getWordTranslation(word, langTo).subscribeOn(Schedulers.newThread())
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(wordData -> {
 					wordData.setWord(word);
 					if (mDictionaryInteractor.saveWordTranslation(wordData)) {
-						mDictionaryView.setNewWord(WordTranslationModel.newWordTranslationModel(word, wordData.getTranslation()[0]));
+						mDictionaryView.setNewWord(WordTranslationModel.newWordTranslationModel(word, wordData.getTranslation()[0], wordData.getLanguage()));
 						Log.e("Current word", wordData.getTranslation()[0]);
 					}
 				});

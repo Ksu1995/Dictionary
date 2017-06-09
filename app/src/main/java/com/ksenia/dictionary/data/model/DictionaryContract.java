@@ -22,10 +22,10 @@ public final class DictionaryContract {
 
 	public static class DictionaryEntry implements BaseColumns {
 		public static final String TABLE_NAME = "dictionary";
-		public static final String COLUMN_WORD = "word";
-		public static final String COLUMN_TRANSLATION = "translation";
-		public static final String COLUMN_LANGUAGE = "lang";
-		public static final String COLUMN_FAVOURITE = "favourite";
+		static final String COLUMN_WORD = "word";
+		static final String COLUMN_TRANSLATION = "translation";
+		static final String COLUMN_LANGUAGE = "lang";
+		static final String COLUMN_FAVOURITE = "favourite";
 	}
 }
 

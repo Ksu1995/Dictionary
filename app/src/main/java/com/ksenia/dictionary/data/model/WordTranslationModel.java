@@ -18,6 +18,12 @@ public class WordTranslationModel {
 	@StorIOSQLiteColumn(name = DictionaryContract.DictionaryEntry.COLUMN_TRANSLATION)
 	String mTranslation;
 
+	@StorIOSQLiteColumn(name = DictionaryContract.DictionaryEntry.COLUMN_LANGUAGE, key =true)
+	String mLang;
+
+	@StorIOSQLiteColumn(name = DictionaryContract.DictionaryEntry.COLUMN_FAVOURITE)
+	boolean mFavourite;
+
 	public WordTranslationModel() {
 	}
 
@@ -30,10 +36,12 @@ public class WordTranslationModel {
 	}
 
 	@NonNull
-	public static WordTranslationModel newWordTranslationModel(String word, String translation) {
+	public static WordTranslationModel newWordTranslationModel(String word, String translation, String language) {
 		WordTranslationModel wordTranslationModel = new WordTranslationModel();
 		wordTranslationModel.mWord = word;
 		wordTranslationModel.mTranslation = translation;
+		wordTranslationModel.mLang = language;
+		wordTranslationModel.mFavourite = false;
 		return wordTranslationModel;
 	}
 

@@ -1,5 +1,7 @@
 package com.ksenia.dictionary.business.dictionary;
 
+import android.support.annotation.NonNull;
+
 import com.ksenia.dictionary.data.model.WordTranslationModel;
 import com.ksenia.dictionary.data.network.data.WordTranslation;
 
@@ -14,7 +16,7 @@ import rx.Single;
 
 public interface IDictionaryInteractor {
 
-	Single<WordTranslation> getWordTranslation(String word);
+	Single<WordTranslation> getWordTranslation(@NonNull String word, String langTo);
 
 	boolean saveWordTranslation(WordTranslation wordTranslation);
 

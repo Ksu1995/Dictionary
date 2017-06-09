@@ -11,6 +11,6 @@ public interface IDictionaryPresenter {
     void bindView(IDictionaryView dictionaryView);
     void unbindView();
 
-    void clickAddNewWord(String word);
+    void clickAddNewWord(String word, String langTo);
     void loadDictionary();
 }

@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface IDictionaryView {
 
-	void addNewWord(String word);
+	void addNewWord(String word, String langTo);
 
 	void setNewWord(WordTranslationModel word);
 

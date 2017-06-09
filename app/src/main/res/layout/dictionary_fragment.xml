@@ -12,6 +12,27 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:showIn="@layout/activity_main">
+        <Spinner
+            android:id="@+id/langFrom_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/btn_dropdown"
+            android:spinnerMode="dropdown"
+            app:layout_constraintHorizontal_weight="0.5"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/langTo_spinner"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintHorizontal_chainStyle="spread"/>
+        <Spinner
+            android:id="@+id/langTo_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/btn_dropdown"
+            app:layout_constraintLeft_toRightOf="@+id/langFrom_spinner"
+            app:layout_constraintTop_toTopOf="parent"
+            android:spinnerMode="dropdown"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintHorizontal_chainStyle="packed"/>
 
         <EditText
             android:id="@+id/new_word"
@@ -19,7 +40,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/langTo_spinner"
             tools:text="Hello World!"/>
 
         <android.support.v7.widget.RecyclerView
@@ -30,8 +51,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/new_word"
-            tools:layout_editor_absoluteX="8dp"
-            tools:layout_editor_absoluteY="0dp"/>
+            />
 
     </android.support.constraint.ConstraintLayout>
 

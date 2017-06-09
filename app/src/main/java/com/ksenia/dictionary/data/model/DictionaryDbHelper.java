@@ -9,9 +9,9 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 
 public class DictionaryDbHelper extends SQLiteOpenHelper {
-	// If you change the database schema, you must increment the database version.
-	public static final int DATABASE_VERSION = 1;
-	public static final String DATABASE_NAME = "Dictionary.db";
+
+	private static final int DATABASE_VERSION = 1;
+	private static final String DATABASE_NAME = "Dictionary.db";
 
 	public DictionaryDbHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);

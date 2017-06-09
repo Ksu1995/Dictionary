@@ -11,7 +11,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.ksenia.dictionary.MyApplication;
@@ -37,6 +40,9 @@ public class DictionaryFragment extends Fragment implements IDictionaryView {
 	private List<WordTranslationModel> mWordList;
 	private WordListAdapter mWordListAdapter;
 	private EditText mWordEditText;
+	private Spinner mLangFrom;
+	private Spinner mLangTo;
+	private String mCurrentLang;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,7 +57,7 @@ public class DictionaryFragment extends Fragment implements IDictionaryView {
 		View view = inflater.inflate(R.layout.dictionary_fragment, container, false);
 		FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
 		fab.setOnClickListener(view1 -> {
-			addNewWord(mWordEditText.getText().toString());
+			addNewWord(mWordEditText.getText().toString(), mCurrentLang);
 			Snackbar.make(view1, "Replace with your own action", Snackbar.LENGTH_LONG)
 					.setAction("Action", null).show();
 		});
@@ -63,6 +69,23 @@ public class DictionaryFragment extends Fragment implements IDictionaryView {
 		wordList.setAdapter(mWordListAdapter);
 		mDictionaryPresenter.bindView(this);
 		mDictionaryPresenter.loadDictionary();
+		mLangTo = (Spinner) view.findViewById(R.id.langTo_spinner);
+		mLangFrom = (Spinner) view.findViewById(R.id.langFrom_spinner);
+		String[] languages = getResources().getStringArray(R.array.languages);
+		ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, languages);
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		mLangTo.setAdapter(adapter);
+		mLangTo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				mCurrentLang = languages[position];
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+				mCurrentLang = languages[0];
+			}
+		});
 		return view;
 	}
 
@@ -73,8 +96,8 @@ public class DictionaryFragment extends Fragment implements IDictionaryView {
 	}
 
 	@Override
-	public void addNewWord(String word) {
-		mDictionaryPresenter.clickAddNewWord(word);
+	public void addNewWord(String word, String langTo) {
+		mDictionaryPresenter.clickAddNewWord(word, langTo);
 	}
 
 	@Override
@@ -100,8 +123,7 @@ public class DictionaryFragment extends Fragment implements IDictionaryView {
 		@Override
 		public WordViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 			View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.word_item, parent, false);
-			WordViewHolder pvh = new WordViewHolder(v);
-			return pvh;
+			return new WordViewHolder(v);
 		}
 
 		@Override

@@ -14,9 +14,9 @@ import rx.Single;
 
 public interface IDictionaryRepository {
 
-	Single<WordTranslation> getWordTranslation(String word);
+	Single<WordTranslation> getWordTranslation(String word, String langTo);
 
-	void saveWordTranslation(WordTranslation wordTranslation);
+	boolean saveWordTranslation(WordTranslation wordTranslation);
 
 	Observable<List<WordTranslationModel>> getDictionary();
 }
