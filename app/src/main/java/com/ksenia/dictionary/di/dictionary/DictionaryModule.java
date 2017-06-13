@@ -9,8 +9,6 @@ import com.ksenia.dictionary.data.repository.dictionary.IDictionaryRepository;
 import com.ksenia.dictionary.presentation.dictionary.presenter.DictionaryPresenter;
 import com.ksenia.dictionary.presentation.dictionary.presenter.IDictionaryPresenter;
 
-import javax.inject.Singleton;
-
 import dagger.Module;
 import dagger.Provides;
 
@@ -19,7 +17,7 @@ import dagger.Provides;
  */
 @Module
 public class DictionaryModule {
-
+	
 	@Provides
 	IDictionaryRepository provideDictionaryRepository(Context context) {
 		return new DictionaryRepository(context);

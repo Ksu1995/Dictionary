@@ -12,8 +12,6 @@ import com.pushtorefresh.storio.sqlite.SQLiteTypeMapping;
 import com.pushtorefresh.storio.sqlite.StorIOSQLite;
 import com.pushtorefresh.storio.sqlite.impl.DefaultStorIOSQLite;
 
-import javax.inject.Singleton;
-
 import dagger.Module;
 import dagger.Provides;
 
@@ -23,15 +21,13 @@ import dagger.Provides;
 @Module
 public class BdModule {
 
-	@Singleton
 	@Provides
 	SQLiteOpenHelper provideSQLiteOpenHelper(Context context) {
 		return new DictionaryDbHelper(context);
 	}
 
-	@Singleton
 	@Provides
-	StorIOSQLite provideStorIOSQLite(SQLiteOpenHelper  dbHelper) {
+	StorIOSQLite provideStorIOSQLite(SQLiteOpenHelper dbHelper) {
 		return DefaultStorIOSQLite.builder()
 				.sqliteOpenHelper(dbHelper).addTypeMapping(WordTranslationModel.class, SQLiteTypeMapping.<WordTranslationModel>builder()
 						.putResolver(new WordTranslationModelStorIOSQLitePutResolver())

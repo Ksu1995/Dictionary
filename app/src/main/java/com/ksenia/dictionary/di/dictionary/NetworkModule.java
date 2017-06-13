@@ -2,8 +2,6 @@ package com.ksenia.dictionary.di.dictionary;
 
 import com.ksenia.dictionary.data.repository.dictionary.IDictionaryService;
 
-import javax.inject.Singleton;
-
 import dagger.Module;
 import dagger.Provides;
 import retrofit2.Retrofit;
@@ -16,7 +14,6 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 @Module
 public class NetworkModule {
 
-	@Singleton
 	@Provides
 	IDictionaryService provideDictionaryService() {
 		Retrofit retrofit = new Retrofit.Builder()
