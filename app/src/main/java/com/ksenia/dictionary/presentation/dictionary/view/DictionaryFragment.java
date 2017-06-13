@@ -21,7 +21,9 @@ import android.widget.TextView;
 import com.ksenia.dictionary.MyApplication;
 import com.ksenia.dictionary.R;
 import com.ksenia.dictionary.data.model.WordTranslationModel;
+import com.ksenia.dictionary.di.dictionary.BdModule;
 import com.ksenia.dictionary.di.dictionary.DictionaryModule;
+import com.ksenia.dictionary.di.dictionary.NetworkModule;
 import com.ksenia.dictionary.presentation.dictionary.presenter.IDictionaryPresenter;
 
 import java.util.ArrayList;
@@ -48,8 +50,7 @@ public class DictionaryFragment extends Fragment implements IDictionaryView {
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setRetainInstance(true);
-		MyApplication.get(getContext()).applicationComponent().plus(new DictionaryModule()).inject(this);
+		MyApplication.get(getContext()).applicationComponent().plus(new DictionaryModule(), new BdModule(), new NetworkModule()).inject(this);
 	}
 
 	@Override
@@ -150,12 +151,7 @@ public class DictionaryFragment extends Fragment implements IDictionaryView {
 				mWord = (TextView) itemView.findViewById(R.id.person_name);
 				mTranslation = (TextView) itemView.findViewById(R.id.person_age);
 				mFavouriteButton = (ImageButton) itemView.findViewById(R.id.favorite);
-				mFavouriteButton.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						mFavouriteButton.setImageDrawable(itemView.getContext().getDrawable(android.R.drawable.star_big_on));
-					}
-				});
+				mFavouriteButton.setOnClickListener(v -> mFavouriteButton.setImageDrawable(itemView.getContext().getDrawable(android.R.drawable.star_big_on)));
 			}
 		}
 	}

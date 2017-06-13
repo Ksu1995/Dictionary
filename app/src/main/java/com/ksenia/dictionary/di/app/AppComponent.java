@@ -1,7 +1,9 @@
 package com.ksenia.dictionary.di.app;
 
+import com.ksenia.dictionary.di.dictionary.BdModule;
 import com.ksenia.dictionary.di.dictionary.DictionaryComponent;
 import com.ksenia.dictionary.di.dictionary.DictionaryModule;
+import com.ksenia.dictionary.di.dictionary.NetworkModule;
 
 import javax.inject.Singleton;
 
@@ -15,6 +17,5 @@ import dagger.Component;
 @Singleton
 public interface AppComponent {
 
-	DictionaryComponent plus(DictionaryModule dictionaryModule);
-
+	DictionaryComponent plus(DictionaryModule dictionaryModule, BdModule bdModule, NetworkModule networkModule);
 }

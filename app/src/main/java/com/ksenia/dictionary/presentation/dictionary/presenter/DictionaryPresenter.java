@@ -35,20 +35,20 @@ public class DictionaryPresenter implements IDictionaryPresenter {
 
 	@Override
 	public void clickAddNewWord(String word, String langTo) {
-		mDictionaryInteractor.getWordTranslation(word, langTo).subscribeOn(Schedulers.newThread())
+		mDictionaryInteractor.getWordTranslation(word, langTo).subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(wordData -> {
-					wordData.setWord(word);
-					if (mDictionaryInteractor.saveWordTranslation(wordData)) {
-						mDictionaryView.setNewWord(WordTranslationModel.newWordTranslationModel(word, wordData.getTranslation()[0], wordData.getLanguage()));
+					WordTranslationModel wordTranslationModel = WordTranslationModel.newWordTranslationModel(word, wordData.getTranslation()[0], wordData.getLanguage());
+					if (mDictionaryInteractor.saveWordTranslation(wordTranslationModel)) {
+						mDictionaryView.setNewWord(wordTranslationModel);
 						Log.e("Current word", wordData.getTranslation()[0]);
 					}
 				}, this::handleErrorTranslateWord);
 	}
+
 	private void handleErrorTranslateWord(Throwable throwable) {
 		mDictionaryView.showError();
 	}
-
 
 	@Override
 	public void loadDictionary() {

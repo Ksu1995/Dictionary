@@ -1,40 +1,32 @@
 package com.ksenia.dictionary.data.network.data;
 
-import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Created by Samsonova_K on 31.05.2017.
  */
 
 public class WordTranslation extends TranslationResponse {
-
+	@JsonProperty("lang")
 	private String mLanguage;
+	@JsonProperty("text")
 	private String[] mTranslation;
-	private String mWord;
+
+	public WordTranslation(String lang, String[] translations, int returnCode) {
+		super(returnCode);
+		mLanguage = lang;
+		mTranslation = translations;
+	}
+
+	public WordTranslation() {
+	}
 
 	public String getLanguage() {
 		return mLanguage;
-	}
-
-	@JsonSetter("lang")
-	public void setLanguage(String language) {
-		mLanguage = language;
 	}
 
 	public String[] getTranslation() {
 		return mTranslation;
 	}
 
-	@JsonSetter("text")
-	public void setTranslation(String[] translation) {
-		mTranslation = translation;
-	}
-
-	public String getWord() {
-		return mWord;
-	}
-
-	public void setWord(String word) {
-		mWord = word;
-	}
 }

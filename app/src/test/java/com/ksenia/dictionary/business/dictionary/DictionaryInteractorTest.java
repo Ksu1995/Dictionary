@@ -10,7 +10,6 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import rx.Observable;
 import rx.Single;
 import rx.observers.TestSubscriber;
 
@@ -35,11 +34,7 @@ public class DictionaryInteractorTest {
 
     @Test
     public void getWordTranslationSuccess() {
-        WordTranslation wordTranslation = new WordTranslation();
-        wordTranslation.setLanguage("ru");
-        wordTranslation.setWord("mother");
-        wordTranslation.setTranslation(new String[]{"мама"});
-        wordTranslation.setResponseCode(200);
+        WordTranslation wordTranslation = new WordTranslation("ru", new String[]{"мама"}, 200);
         // mock
         when(mDictionaryRepository.getWordTranslation("mother", "ru")).thenReturn(Single.fromCallable(() ->
                 wordTranslation));
@@ -74,11 +69,7 @@ public class DictionaryInteractorTest {
 
     @Test
     public void getWordTranslationOtherError() {
-        WordTranslation wordTranslation = new WordTranslation();
-        wordTranslation.setLanguage("ru");
-        wordTranslation.setWord("mother");
-        wordTranslation.setTranslation(new String[]{"мама"});
-        wordTranslation.setResponseCode(400);
+        WordTranslation wordTranslation = new WordTranslation("ru", new String[]{"мама"}, 400);
         // mock
         when(mDictionaryRepository.getWordTranslation("", "")).thenReturn(Single.fromCallable(() ->
                 wordTranslation));
@@ -94,7 +85,7 @@ public class DictionaryInteractorTest {
     @Test
     public void getDictionaryEmpty() {
         // mock
-        when(mDictionaryRepository.getDictionary()).thenReturn(Observable.fromCallable(() -> new ArrayList<WordTranslationModel>()));
+        when(mDictionaryRepository.getDictionary()).thenReturn(Single.fromCallable(() -> new ArrayList<>()));
         // create TestSubscriber
         TestSubscriber<List<WordTranslationModel>> testSubscriber = TestSubscriber.create();
         // call method and get result
@@ -115,7 +106,7 @@ public class DictionaryInteractorTest {
         List<WordTranslationModel> dictionary = new ArrayList<>();
         dictionary.add(WordTranslationModel.newWordTranslationModel("mother", "мама", "ru"));
         // mock
-        when(mDictionaryRepository.getDictionary()).thenReturn(rx.Observable.fromCallable(() -> dictionary));
+        when(mDictionaryRepository.getDictionary()).thenReturn(rx.Single.fromCallable(() -> dictionary));
         // create TestSubscriber
         TestSubscriber<List<WordTranslationModel>> testSubscriber = TestSubscriber.create();
         // call method and get result
@@ -132,11 +123,7 @@ public class DictionaryInteractorTest {
 
     @Test
     public void saveWordTranslationSuccess() {
-        WordTranslation wordTranslation = new WordTranslation();
-        wordTranslation.setLanguage("ru");
-        wordTranslation.setWord("mother");
-        wordTranslation.setTranslation(new String[]{"мама"});
-        wordTranslation.setResponseCode(200);
+        WordTranslationModel wordTranslation = WordTranslationModel.newWordTranslationModel("mother","мама", "ru");
         // mock
         when(mDictionaryRepository.saveWordTranslation(wordTranslation)).thenReturn(true);
         // call method and get result
@@ -145,11 +132,7 @@ public class DictionaryInteractorTest {
 
     @Test
     public void saveWordTranslationFailed() {
-        WordTranslation wordTranslation = new WordTranslation();
-        wordTranslation.setLanguage("ru");
-        wordTranslation.setWord("mother");
-        wordTranslation.setTranslation(new String[]{"мама"});
-        wordTranslation.setResponseCode(200);
+        WordTranslationModel wordTranslation = WordTranslationModel.newWordTranslationModel("mother","мама", "ru");
         // mock
         when(mDictionaryRepository.saveWordTranslation(wordTranslation)).thenReturn(false);
         // call method and get result

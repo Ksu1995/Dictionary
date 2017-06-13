@@ -5,7 +5,6 @@ import com.ksenia.dictionary.data.network.data.WordTranslation;
 
 import java.util.List;
 
-import rx.Observable;
 import rx.Single;
 
 /**
@@ -16,7 +15,7 @@ public interface IDictionaryRepository {
 
 	Single<WordTranslation> getWordTranslation(String word, String langTo);
 
-	boolean saveWordTranslation(WordTranslation wordTranslation);
+	boolean saveWordTranslation(WordTranslationModel wordTranslation);
 
-	Observable<List<WordTranslationModel>> getDictionary();
+	Single<List<WordTranslationModel>> getDictionary();
 }

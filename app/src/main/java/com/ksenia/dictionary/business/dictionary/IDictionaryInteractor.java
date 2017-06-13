@@ -18,8 +18,8 @@ public interface IDictionaryInteractor {
 
 	Single<WordTranslation> getWordTranslation(@NonNull String word, String langTo);
 
-	boolean saveWordTranslation(WordTranslation wordTranslation);
+	boolean saveWordTranslation(WordTranslationModel wordTranslation);
 
-	Observable<List<WordTranslationModel>> getDictionary();
+	Single<List<WordTranslationModel>> getDictionary();
 
 }

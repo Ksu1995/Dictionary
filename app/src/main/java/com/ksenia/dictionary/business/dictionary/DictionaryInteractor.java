@@ -37,12 +37,12 @@ public class DictionaryInteractor implements IDictionaryInteractor {
 	}
 
 	@Override
-	public boolean saveWordTranslation(WordTranslation wordTranslation) {
+	public boolean saveWordTranslation(WordTranslationModel wordTranslation) {
 		return mDictionaryRepository.saveWordTranslation(wordTranslation);
 	}
 
 	@Override
-	public Observable<List<WordTranslationModel>> getDictionary() {
+	public Single<List<WordTranslationModel>> getDictionary() {
 		return mDictionaryRepository.getDictionary();
 	}
 
