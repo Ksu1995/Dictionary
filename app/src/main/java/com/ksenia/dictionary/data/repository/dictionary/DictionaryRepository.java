@@ -10,6 +10,7 @@ import com.ksenia.dictionary.di.dictionary.BdModule;
 import com.ksenia.dictionary.di.dictionary.DictionaryModule;
 import com.ksenia.dictionary.di.dictionary.NetworkModule;
 import com.pushtorefresh.storio.sqlite.StorIOSQLite;
+import com.pushtorefresh.storio.sqlite.operations.put.PutResult;
 import com.pushtorefresh.storio.sqlite.queries.Query;
 
 import java.util.List;
@@ -41,11 +42,11 @@ public class DictionaryRepository implements IDictionaryRepository {
 	}
 
 	@Override
-	public boolean saveWordTranslation(WordTranslationModel wordTranslation) {
+	public Single<PutResult> saveWordTranslation(WordTranslationModel wordTranslation) {
 		return mStorIOSQLite.put()
 				.object(wordTranslation)
                 .prepare()
-                .executeAsBlocking().wasInserted();
+                .asRxSingle();//.subscribe(putResult -> { putResult.wasInserted();});
 	}
 
 	@Override

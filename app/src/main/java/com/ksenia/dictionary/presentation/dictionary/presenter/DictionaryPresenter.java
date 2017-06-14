@@ -37,11 +37,10 @@ public class DictionaryPresenter implements IDictionaryPresenter {
 	public void clickAddNewWord(String word, String langTo) {
 		mDictionaryInteractor.getWordTranslation(word, langTo).subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
-				.subscribe(wordData -> {
-					WordTranslationModel wordTranslationModel = WordTranslationModel.newWordTranslationModel(word, wordData.getTranslation()[0], wordData.getLanguage());
-					if (mDictionaryInteractor.saveWordTranslation(wordTranslationModel)) {
-						mDictionaryView.setNewWord(wordTranslationModel);
-						Log.e("Current word", wordData.getTranslation()[0]);
+				.subscribe(wordTranslationWithResult -> {
+					if (wordTranslationWithResult.isInserted()) {
+						mDictionaryView.setNewWord(wordTranslationWithResult.getWordTranslationModel());
+						Log.e("Current word", wordTranslationWithResult.getWordTranslationModel().getTranslation());
 					}
 				}, this::handleErrorTranslateWord);
 	}
@@ -52,7 +51,7 @@ public class DictionaryPresenter implements IDictionaryPresenter {
 
 	@Override
 	public void loadDictionary() {
-		mDictionaryInteractor.getDictionary().subscribeOn(Schedulers.newThread())
+		mDictionaryInteractor.getDictionary().subscribeOn(Schedulers.computation())
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribe(dictionary -> {
 					mDictionaryView.updateWordList(dictionary);

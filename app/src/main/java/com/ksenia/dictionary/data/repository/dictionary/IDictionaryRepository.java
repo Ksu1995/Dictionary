@@ -2,6 +2,7 @@ package com.ksenia.dictionary.data.repository.dictionary;
 
 import com.ksenia.dictionary.data.model.WordTranslationModel;
 import com.ksenia.dictionary.data.network.data.WordTranslation;
+import com.pushtorefresh.storio.sqlite.operations.put.PutResult;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ public interface IDictionaryRepository {
 
 	Single<WordTranslation> getWordTranslation(String word, String langTo);
 
-	boolean saveWordTranslation(WordTranslationModel wordTranslation);
+	Single<PutResult> saveWordTranslation(WordTranslationModel wordTranslation);
 
 	Single<List<WordTranslationModel>> getDictionary();
 }

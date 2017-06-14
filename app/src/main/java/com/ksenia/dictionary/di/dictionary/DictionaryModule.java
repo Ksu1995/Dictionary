@@ -17,7 +17,7 @@ import dagger.Provides;
  */
 @Module
 public class DictionaryModule {
-	
+
 	@Provides
 	IDictionaryRepository provideDictionaryRepository(Context context) {
 		return new DictionaryRepository(context);

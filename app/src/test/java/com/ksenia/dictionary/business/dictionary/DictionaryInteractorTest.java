@@ -1,8 +1,10 @@
 package com.ksenia.dictionary.business.dictionary;
 
 import com.ksenia.dictionary.data.model.WordTranslationModel;
+import com.ksenia.dictionary.data.model.WordTranslationWithResult;
 import com.ksenia.dictionary.data.network.data.WordTranslation;
 import com.ksenia.dictionary.data.repository.dictionary.IDictionaryRepository;
+import com.pushtorefresh.storio.sqlite.operations.put.PutResult;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -38,8 +40,10 @@ public class DictionaryInteractorTest {
         // mock
         when(mDictionaryRepository.getWordTranslation("mother", "ru")).thenReturn(Single.fromCallable(() ->
                 wordTranslation));
+        when(mDictionaryRepository.saveWordTranslation("mother", "ru")).thenReturn(Single.fromCallable(() ->
+                new PutResult()));
         // create TestSubscriber
-        TestSubscriber<WordTranslation> testSubscriber = TestSubscriber.create();
+        TestSubscriber<WordTranslationWithResult> testSubscriber = TestSubscriber.create();
         // call method and get result
         mDictionaryInteractor.getWordTranslation("mother", "ru").subscribe(testSubscriber);
         testSubscriber.awaitTerminalEvent();
@@ -47,7 +51,7 @@ public class DictionaryInteractorTest {
         testSubscriber.assertNoErrors();
         testSubscriber.assertCompleted();
         // test of the received PersonalFullDataModel
-        WordTranslation wordTranslationModel = testSubscriber.getOnNextEvents().get(0);
+        WordTranslationWithResult wordTranslationModel = testSubscriber.getOnNextEvents().get(0);
         assertThat(wordTranslationModel.getTranslation()).isEqualTo(new String[]{"мама"});
         assertThat(wordTranslationModel.getWord()).isEqualTo("mother");
         assertThat(wordTranslationModel.getLanguage()).isEqualTo("ru");
@@ -59,7 +63,7 @@ public class DictionaryInteractorTest {
         // mock
         when(mDictionaryRepository.getWordTranslation("", "")).thenReturn(Single.error(new IllegalStateException()));
         // create TestSubscriber
-        TestSubscriber<WordTranslation> testSubscriber = TestSubscriber.create();
+        TestSubscriber<WordTranslationWithResult> testSubscriber = TestSubscriber.create();
         // call method and get result
         mDictionaryInteractor.getWordTranslation("", "").subscribe(testSubscriber);
         testSubscriber.awaitTerminalEvent();
@@ -74,7 +78,7 @@ public class DictionaryInteractorTest {
         when(mDictionaryRepository.getWordTranslation("", "")).thenReturn(Single.fromCallable(() ->
                 wordTranslation));
         // create TestSubscriber
-        TestSubscriber<WordTranslation> testSubscriber = TestSubscriber.create();
+        TestSubscriber<WordTranslationWithResult> testSubscriber = TestSubscriber.create();
         // call method and get result
         mDictionaryInteractor.getWordTranslation("", "").subscribe(testSubscriber);
         testSubscriber.awaitTerminalEvent();

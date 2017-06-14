@@ -4,13 +4,17 @@ package com.ksenia.dictionary.business.dictionary;
 import android.support.annotation.NonNull;
 
 import com.ksenia.dictionary.data.model.WordTranslationModel;
+import com.ksenia.dictionary.data.model.WordTranslationWithResult;
 import com.ksenia.dictionary.data.network.data.WordTranslation;
 import com.ksenia.dictionary.data.repository.dictionary.IDictionaryRepository;
+import com.pushtorefresh.storio.sqlite.operations.put.PutResult;
 
 import java.util.List;
 
 import rx.Observable;
 import rx.Single;
+import rx.functions.Func1;
+import rx.functions.Func2;
 
 /**
  * Created by Ksenia on 28.05.2017.
@@ -25,25 +29,31 @@ public class DictionaryInteractor implements IDictionaryInteractor {
 	}
 
 	@Override
-	public Single<WordTranslation> getWordTranslation(@NonNull String word, String langTo) {
+	public Single<WordTranslationWithResult> getWordTranslation(@NonNull String word, String langTo) {
 		return mDictionaryRepository.getWordTranslation(word, langTo).map(wordTranslation -> {
 			if (wordTranslation.getResponseCode() != 200) {
-				throw new DictionaryInteractorException("Responsecode = "+ wordTranslation.getResponseCode());
+				throw new DictionaryInteractorException("Response code = " + wordTranslation.getResponseCode());
 			} else {
 				return wordTranslation;
+			}
+		}).flatMap(new Func1<WordTranslation, Single<WordTranslationWithResult>>() {
+			@Override
+			public Single<WordTranslationWithResult> call(WordTranslation wordTranslation) {
+				WordTranslationModel wordTranslationModel = WordTranslationModel.newWordTranslationModel(word, wordTranslation.getTranslation()[0], wordTranslation.getLanguage());
+				return Single.zip(Single.fromCallable(() -> wordTranslationModel),
+						mDictionaryRepository.saveWordTranslation(wordTranslationModel), new Func2<WordTranslationModel, PutResult, WordTranslationWithResult>() {
+							@Override
+							public WordTranslationWithResult call(WordTranslationModel wordTranslationModel, PutResult putResult) {
+								return new WordTranslationWithResult(wordTranslationModel, putResult.wasInserted());
+							}
+						});
 			}
 		}).toObservable().onErrorResumeNext(throwable -> Observable.error(
 				new DictionaryInteractorException("Incorrect personal info"))).toSingle();
 	}
 
 	@Override
-	public boolean saveWordTranslation(WordTranslationModel wordTranslation) {
-		return mDictionaryRepository.saveWordTranslation(wordTranslation);
-	}
-
-	@Override
 	public Single<List<WordTranslationModel>> getDictionary() {
 		return mDictionaryRepository.getDictionary();
 	}
-
 }
