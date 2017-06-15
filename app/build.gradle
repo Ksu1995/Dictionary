@@ -57,7 +57,6 @@ dependencies {
     // If you need StorIO for SQLite
     compile 'com.pushtorefresh.storio:sqlite:1.13.0'
     compile 'com.pushtorefresh.storio:sqlite-annotations:1.13.0'
-    provided 'com.pushtorefresh.storio:sqlite-annotations-processor:1.13.0'
 
     // AssertJ
     testCompile "org.assertj:assertj-core:3.0.0"

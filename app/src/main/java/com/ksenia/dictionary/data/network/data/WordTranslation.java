@@ -18,7 +18,7 @@ public class WordTranslation extends TranslationResponse {
 		mTranslation = translations;
 	}
 
-	public WordTranslation() {
+	WordTranslation() {
 	}
 
 	public String getLanguage() {

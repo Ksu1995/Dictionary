@@ -7,6 +7,7 @@ package com.ksenia.dictionary.data.model;
 import android.support.annotation.NonNull;
 
 import com.google.common.base.Objects;
+import com.ksenia.dictionary.data.network.data.Language;
 import com.pushtorefresh.storio.sqlite.annotations.StorIOSQLiteColumn;
 import com.pushtorefresh.storio.sqlite.annotations.StorIOSQLiteType;
 
@@ -20,7 +21,7 @@ public class WordTranslationModel {
 	String mTranslation;
 
 	@StorIOSQLiteColumn(name = DictionaryEntry.COLUMN_LANGUAGE, key = true)
-	String mLang;
+	Language mLang;
 
 	@StorIOSQLiteColumn(name = DictionaryEntry.COLUMN_FAVOURITE)
 	boolean mFavourite;
@@ -37,7 +38,7 @@ public class WordTranslationModel {
 	}
 
 	@NonNull
-	public static WordTranslationModel newWordTranslationModel(String word, String translation, String language) {
+	public static WordTranslationModel newWordTranslationModel(String word, String translation, Language language) {
 		WordTranslationModel wordTranslationModel = new WordTranslationModel();
 		wordTranslationModel.mWord = word;
 		wordTranslationModel.mTranslation = translation;
@@ -64,6 +65,6 @@ public class WordTranslationModel {
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(mWord, mTranslation, mLang, mFavourite);
+		return Objects.hashCode(mWord, mTranslation, mLang.getName(), mFavourite);
 	}
 }

@@ -8,6 +8,8 @@ import com.ksenia.dictionary.data.repository.dictionary.DictionaryRepository;
 import com.ksenia.dictionary.data.repository.dictionary.IDictionaryRepository;
 import com.ksenia.dictionary.presentation.dictionary.presenter.DictionaryPresenter;
 import com.ksenia.dictionary.presentation.dictionary.presenter.IDictionaryPresenter;
+import com.ksenia.dictionary.utils.rx.IRxSchedulers;
+import com.ksenia.dictionary.utils.rx.RxSchedulers;
 
 import dagger.Module;
 import dagger.Provides;
@@ -24,13 +26,18 @@ public class DictionaryModule {
 	}
 
 	@Provides
-	IDictionaryPresenter provideDictionaryPresenter(IDictionaryInteractor dictionaryInteractor) {
-		return new DictionaryPresenter(dictionaryInteractor);
+	IDictionaryPresenter provideDictionaryPresenter(IDictionaryInteractor dictionaryInteractor, IRxSchedulers schedulers) {
+		return new DictionaryPresenter(dictionaryInteractor, schedulers);
 	}
 
 	@Provides
 	IDictionaryInteractor provideDictionaryInteractor(IDictionaryRepository dictionaryRepository) {
 		return new DictionaryInteractor(dictionaryRepository);
+	}
+
+	@Provides
+	IRxSchedulers provideRxSchedulers() {
+		return new RxSchedulers();
 	}
 
 }

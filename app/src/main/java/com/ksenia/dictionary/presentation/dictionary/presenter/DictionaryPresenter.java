@@ -3,11 +3,10 @@ package com.ksenia.dictionary.presentation.dictionary.presenter;
 import android.util.Log;
 
 import com.ksenia.dictionary.business.dictionary.IDictionaryInteractor;
-import com.ksenia.dictionary.data.model.WordTranslationModel;
+import com.ksenia.dictionary.data.network.data.Language;
 import com.ksenia.dictionary.presentation.dictionary.view.IDictionaryView;
+import com.ksenia.dictionary.utils.rx.IRxSchedulers;
 
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by Samsonova_K on 30.05.2017.
@@ -18,9 +17,11 @@ public class DictionaryPresenter implements IDictionaryPresenter {
 	private IDictionaryInteractor mDictionaryInteractor;
 
 	private IDictionaryView mDictionaryView;
+	private IRxSchedulers mRxSchedulers;
 
-	public DictionaryPresenter(IDictionaryInteractor dictionaryInteractor) {
+	public DictionaryPresenter(IDictionaryInteractor dictionaryInteractor, IRxSchedulers schedulers) {
 		mDictionaryInteractor = dictionaryInteractor;
+		mRxSchedulers = schedulers;
 	}
 
 	@Override
@@ -34,27 +35,27 @@ public class DictionaryPresenter implements IDictionaryPresenter {
 	}
 
 	@Override
-	public void clickAddNewWord(String word, String langTo) {
-		mDictionaryInteractor.getWordTranslation(word, langTo).subscribeOn(Schedulers.io())
-				.observeOn(AndroidSchedulers.mainThread())
+	public void clickAddNewWord(String word, Language langTo) {
+		mDictionaryInteractor.getWordTranslation(word, langTo).subscribeOn(mRxSchedulers.getIOScheduler())
+				.observeOn(mRxSchedulers.getMainThreadScheduler())
 				.subscribe(wordTranslationWithResult -> {
 					if (wordTranslationWithResult.isInserted()) {
-						mDictionaryView.setNewWord(wordTranslationWithResult.getWordTranslationModel());
+						mDictionaryView.addNewWord(wordTranslationWithResult.getWordTranslationModel());
 						Log.e("Current word", wordTranslationWithResult.getWordTranslationModel().getTranslation());
 					}
 				}, this::handleErrorTranslateWord);
 	}
 
-	private void handleErrorTranslateWord(Throwable throwable) {
-		mDictionaryView.showError();
-	}
-
 	@Override
 	public void loadDictionary() {
-		mDictionaryInteractor.getDictionary().subscribeOn(Schedulers.computation())
-				.observeOn(AndroidSchedulers.mainThread())
+		mDictionaryInteractor.getDictionary().subscribeOn(mRxSchedulers.getComputationScheduler())
+				.observeOn(mRxSchedulers.getMainThreadScheduler())
 				.subscribe(dictionary -> {
 					mDictionaryView.updateWordList(dictionary);
 				});
+	}
+
+	private void handleErrorTranslateWord(Throwable throwable) {
+		mDictionaryView.showError();
 	}
 }

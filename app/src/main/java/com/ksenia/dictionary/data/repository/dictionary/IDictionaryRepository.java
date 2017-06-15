@@ -1,6 +1,7 @@
 package com.ksenia.dictionary.data.repository.dictionary;
 
 import com.ksenia.dictionary.data.model.WordTranslationModel;
+import com.ksenia.dictionary.data.network.data.Language;
 import com.ksenia.dictionary.data.network.data.WordTranslation;
 import com.pushtorefresh.storio.sqlite.operations.put.PutResult;
 
@@ -14,7 +15,7 @@ import rx.Single;
 
 public interface IDictionaryRepository {
 
-	Single<WordTranslation> getWordTranslation(String word, String langTo);
+	Single<WordTranslation> getWordTranslation(String word, Language langTo);
 
 	Single<PutResult> saveWordTranslation(WordTranslationModel wordTranslation);
 

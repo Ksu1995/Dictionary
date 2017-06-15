@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.ksenia.dictionary.data.model.WordTranslationModel;
 import com.ksenia.dictionary.data.model.WordTranslationWithResult;
+import com.ksenia.dictionary.data.network.data.Language;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ import rx.Single;
 
 public interface IDictionaryInteractor {
 
-	Single<WordTranslationWithResult> getWordTranslation(@NonNull String word, String langTo);
+	Single<WordTranslationWithResult> getWordTranslation(@NonNull String word, Language langTo);
 
 	Single<List<WordTranslationModel>> getDictionary();
 

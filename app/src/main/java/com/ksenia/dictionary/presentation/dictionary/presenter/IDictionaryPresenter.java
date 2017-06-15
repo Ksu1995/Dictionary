@@ -1,5 +1,6 @@
 package com.ksenia.dictionary.presentation.dictionary.presenter;
 
+import com.ksenia.dictionary.data.network.data.Language;
 import com.ksenia.dictionary.presentation.dictionary.view.IDictionaryView;
 
 /**
@@ -11,6 +12,6 @@ public interface IDictionaryPresenter {
     void bindView(IDictionaryView dictionaryView);
     void unbindView();
 
-    void clickAddNewWord(String word, String langTo);
+    void clickAddNewWord(String word, Language langTo);
     void loadDictionary();
 }

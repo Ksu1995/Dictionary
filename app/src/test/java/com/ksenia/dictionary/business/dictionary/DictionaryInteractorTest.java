@@ -2,6 +2,7 @@ package com.ksenia.dictionary.business.dictionary;
 
 import com.ksenia.dictionary.data.model.WordTranslationModel;
 import com.ksenia.dictionary.data.model.WordTranslationWithResult;
+import com.ksenia.dictionary.data.network.data.Language;
 import com.ksenia.dictionary.data.network.data.WordTranslation;
 import com.ksenia.dictionary.data.repository.dictionary.IDictionaryRepository;
 import com.pushtorefresh.storio.sqlite.operations.put.PutResult;
@@ -35,37 +36,59 @@ public class DictionaryInteractorTest {
     }
 
     @Test
-    public void getWordTranslationSuccess() {
+    public void getWordTranslationSuccessButNotInserted() {
         WordTranslation wordTranslation = new WordTranslation("ru", new String[]{"мама"}, 200);
+        WordTranslationModel wordTranslationModel = WordTranslationModel.newWordTranslationModel("mother", "мама", Language.Russian);
         // mock
-        when(mDictionaryRepository.getWordTranslation("mother", "ru")).thenReturn(Single.fromCallable(() ->
+        when(mDictionaryRepository.getWordTranslation("mother", Language.Russian)).thenReturn(Single.fromCallable(() ->
                 wordTranslation));
-        when(mDictionaryRepository.saveWordTranslation("mother", "ru")).thenReturn(Single.fromCallable(() ->
-                new PutResult()));
+        when(mDictionaryRepository.saveWordTranslation(wordTranslationModel)).thenReturn(Single.fromCallable(() ->
+                PutResult.newUpdateResult(0,"Table")));
         // create TestSubscriber
         TestSubscriber<WordTranslationWithResult> testSubscriber = TestSubscriber.create();
         // call method and get result
-        mDictionaryInteractor.getWordTranslation("mother", "ru").subscribe(testSubscriber);
+        mDictionaryInteractor.getWordTranslation("mother", Language.Russian).subscribe(testSubscriber);
         testSubscriber.awaitTerminalEvent();
         // test no errors was not occurred
         testSubscriber.assertNoErrors();
         testSubscriber.assertCompleted();
         // test of the received PersonalFullDataModel
-        WordTranslationWithResult wordTranslationModel = testSubscriber.getOnNextEvents().get(0);
-        assertThat(wordTranslationModel.getTranslation()).isEqualTo(new String[]{"мама"});
-        assertThat(wordTranslationModel.getWord()).isEqualTo("mother");
-        assertThat(wordTranslationModel.getLanguage()).isEqualTo("ru");
-        assertThat(wordTranslationModel.getResponseCode()).isEqualTo(200);
+        WordTranslationWithResult wordTranslationWithResult = testSubscriber.getOnNextEvents().get(0);
+        assertThat(wordTranslationWithResult.getWordTranslationModel()).isEqualTo(wordTranslationModel);
+        assertThat(!wordTranslationWithResult.isInserted());
+    }
+
+    @Test
+    public void getWordTranslationSuccessAndInserted() {
+        WordTranslation wordTranslation = new WordTranslation("ru", new String[]{"мама"}, 200);
+        WordTranslationModel wordTranslationModel = WordTranslationModel.newWordTranslationModel("mother", "мама", Language.Russian);
+        // mock
+        when(mDictionaryRepository.getWordTranslation("mother", Language.Russian)).thenReturn(Single.fromCallable(() ->
+                wordTranslation));
+        when(mDictionaryRepository.saveWordTranslation(wordTranslationModel)).thenReturn(Single.fromCallable(() ->
+                PutResult.newInsertResult(0,"Table")));
+        // create TestSubscriber
+        TestSubscriber<WordTranslationWithResult> testSubscriber = TestSubscriber.create();
+        // call method and get result
+        mDictionaryInteractor.getWordTranslation("mother", Language.Russian).subscribe(testSubscriber);
+        testSubscriber.awaitTerminalEvent();
+        // test no errors was not occurred
+        testSubscriber.assertNoErrors();
+        testSubscriber.assertCompleted();
+        // test of the received PersonalFullDataModel
+        WordTranslationWithResult wordTranslationWithResult = testSubscriber.getOnNextEvents().get(0);
+        assertThat(wordTranslationWithResult.getWordTranslationModel()).isEqualTo(wordTranslationModel);
+        assertThat(wordTranslationWithResult.isInserted());
     }
 
     @Test
     public void getWordTranslationEmptyWordError() {
         // mock
-        when(mDictionaryRepository.getWordTranslation("", "")).thenReturn(Single.error(new IllegalStateException()));
+        when(mDictionaryRepository.getWordTranslation("", Language.Russian)).thenReturn(Single.error(new IllegalStateException()));
         // create TestSubscriber
         TestSubscriber<WordTranslationWithResult> testSubscriber = TestSubscriber.create();
         // call method and get result
-        mDictionaryInteractor.getWordTranslation("", "").subscribe(testSubscriber);
+        mDictionaryInteractor.getWordTranslation("", Language.Russian).subscribe(testSubscriber);
         testSubscriber.awaitTerminalEvent();
         // test error was occurred
         testSubscriber.assertError(DictionaryInteractorException.class);
@@ -75,12 +98,12 @@ public class DictionaryInteractorTest {
     public void getWordTranslationOtherError() {
         WordTranslation wordTranslation = new WordTranslation("ru", new String[]{"мама"}, 400);
         // mock
-        when(mDictionaryRepository.getWordTranslation("", "")).thenReturn(Single.fromCallable(() ->
+        when(mDictionaryRepository.getWordTranslation("", Language.Russian)).thenReturn(Single.fromCallable(() ->
                 wordTranslation));
         // create TestSubscriber
         TestSubscriber<WordTranslationWithResult> testSubscriber = TestSubscriber.create();
         // call method and get result
-        mDictionaryInteractor.getWordTranslation("", "").subscribe(testSubscriber);
+        mDictionaryInteractor.getWordTranslation("", Language.Russian).subscribe(testSubscriber);
         testSubscriber.awaitTerminalEvent();
         // test error was occurred
         testSubscriber.assertError(DictionaryInteractorException.class);
@@ -108,7 +131,7 @@ public class DictionaryInteractorTest {
     @Test
     public void getDictionaryNotEmpty() {
         List<WordTranslationModel> dictionary = new ArrayList<>();
-        dictionary.add(WordTranslationModel.newWordTranslationModel("mother", "мама", "ru"));
+        dictionary.add(WordTranslationModel.newWordTranslationModel("mother", "мама", Language.Russian));
         // mock
         when(mDictionaryRepository.getDictionary()).thenReturn(rx.Single.fromCallable(() -> dictionary));
         // create TestSubscriber
@@ -122,25 +145,6 @@ public class DictionaryInteractorTest {
 
         List<WordTranslationModel> wordTranslationModelList = testSubscriber.getOnNextEvents().get(0);
         assertThat(wordTranslationModelList.size() == 1);
-        assertThat(wordTranslationModelList.get(0)).isEqualTo(WordTranslationModel.newWordTranslationModel("mother", "мама", "ru"));
+        assertThat(wordTranslationModelList.get(0)).isEqualTo(WordTranslationModel.newWordTranslationModel("mother", "мама", Language.Russian));
     }
-
-    @Test
-    public void saveWordTranslationSuccess() {
-        WordTranslationModel wordTranslation = WordTranslationModel.newWordTranslationModel("mother","мама", "ru");
-        // mock
-        when(mDictionaryRepository.saveWordTranslation(wordTranslation)).thenReturn(true);
-        // call method and get result
-        assertThat(mDictionaryInteractor.saveWordTranslation(wordTranslation));
-    }
-
-    @Test
-    public void saveWordTranslationFailed() {
-        WordTranslationModel wordTranslation = WordTranslationModel.newWordTranslationModel("mother","мама", "ru");
-        // mock
-        when(mDictionaryRepository.saveWordTranslation(wordTranslation)).thenReturn(false);
-        // call method and get result
-        assertThat(!mDictionaryInteractor.saveWordTranslation(wordTranslation));
-    }
-
 }

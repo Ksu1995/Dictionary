@@ -5,6 +5,7 @@ import android.content.Context;
 import com.ksenia.dictionary.MyApplication;
 import com.ksenia.dictionary.data.model.DictionaryEntry;
 import com.ksenia.dictionary.data.model.WordTranslationModel;
+import com.ksenia.dictionary.data.network.data.Language;
 import com.ksenia.dictionary.data.network.data.WordTranslation;
 import com.ksenia.dictionary.di.dictionary.BdModule;
 import com.ksenia.dictionary.di.dictionary.DictionaryModule;
@@ -36,9 +37,9 @@ public class DictionaryRepository implements IDictionaryRepository {
 	}
 
 	@Override
-	public Single<WordTranslation> getWordTranslation(String word, String langTo) {
+	public Single<WordTranslation> getWordTranslation(String word, Language langTo) {
 		return mDictionaryService
-				.translateWord("trnsl.1.1.20170530T132550Z.856fb0e22726f7be.6b55b7908badee4e4b7ebd4dd5ca03c824a438d2", word, langTo);
+				.translateWord("trnsl.1.1.20170530T132550Z.856fb0e22726f7be.6b55b7908badee4e4b7ebd4dd5ca03c824a438d2", word, langTo.getName());
 	}
 
 	@Override

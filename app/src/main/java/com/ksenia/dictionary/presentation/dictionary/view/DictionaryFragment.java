@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.ksenia.dictionary.MyApplication;
 import com.ksenia.dictionary.R;
 import com.ksenia.dictionary.data.model.WordTranslationModel;
+import com.ksenia.dictionary.data.network.data.Language;
 import com.ksenia.dictionary.di.dictionary.BdModule;
 import com.ksenia.dictionary.di.dictionary.DictionaryModule;
 import com.ksenia.dictionary.di.dictionary.NetworkModule;
@@ -43,9 +44,8 @@ public class DictionaryFragment extends Fragment implements IDictionaryView {
 	private List<WordTranslationModel> mWordList;
 	private WordListAdapter mWordListAdapter;
 	private EditText mWordEditText;
-	private Spinner mLangFrom;
-	private Spinner mLangTo;
-	private String mCurrentLang;
+	private Language mLangFrom;
+	private Language mLangTo;
 
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,7 +58,7 @@ public class DictionaryFragment extends Fragment implements IDictionaryView {
 							 Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.dictionary_fragment, container, false);
 		FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
-		fab.setOnClickListener(view1 -> addNewWord(mWordEditText.getText().toString(), mCurrentLang));
+		fab.setOnClickListener(view1 -> clickNewWord(mWordEditText.getText().toString(), mLangTo));
 		mWordEditText = (EditText) view.findViewById(R.id.new_word);
 		mWordList = new ArrayList<>();
 		RecyclerView wordList = (RecyclerView) view.findViewById(R.id.word_list);
@@ -67,21 +67,33 @@ public class DictionaryFragment extends Fragment implements IDictionaryView {
 		wordList.setAdapter(mWordListAdapter);
 		mDictionaryPresenter.bindView(this);
 		mDictionaryPresenter.loadDictionary();
-		mLangTo = (Spinner) view.findViewById(R.id.langTo_spinner);
-		mLangFrom = (Spinner) view.findViewById(R.id.langFrom_spinner);
-		String[] languages = getResources().getStringArray(R.array.languages);
-		ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, languages);
+		Spinner langToSpinner = (Spinner) view.findViewById(R.id.langTo_spinner);
+		Spinner langFromSpinner = (Spinner) view.findViewById(R.id.langFrom_spinner);
+		ArrayAdapter<Language> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, Language.values());
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		mLangTo.setAdapter(adapter);
-		mLangTo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+		langToSpinner.setAdapter(adapter);
+		langToSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-				mCurrentLang = languages[position];
+				mLangTo = Language.values()[position];
 			}
 
 			@Override
 			public void onNothingSelected(AdapterView<?> parent) {
-				mCurrentLang = languages[0];
+				mLangTo = Language.values()[0];
+			}
+		});
+
+		langFromSpinner.setAdapter(adapter);
+		langFromSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				mLangFrom = Language.values()[position];
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+				mLangFrom = Language.values()[0];
 			}
 		});
 		return view;
@@ -94,12 +106,13 @@ public class DictionaryFragment extends Fragment implements IDictionaryView {
 	}
 
 	@Override
-	public void addNewWord(String word, String langTo) {
+	public void clickNewWord(String word, Language langTo) {
 		mDictionaryPresenter.clickAddNewWord(word, langTo);
 	}
 
 	@Override
-	public void setNewWord(WordTranslationModel word) {
+	public void addNewWord(WordTranslationModel word) {
+		mWordEditText.setText("");
 		mWordList.add(word);
 		mWordListAdapter.notifyDataSetChanged();
 	}
@@ -151,7 +164,7 @@ public class DictionaryFragment extends Fragment implements IDictionaryView {
 				mWord = (TextView) itemView.findViewById(R.id.person_name);
 				mTranslation = (TextView) itemView.findViewById(R.id.person_age);
 				mFavouriteButton = (ImageButton) itemView.findViewById(R.id.favorite);
-				mFavouriteButton.setOnClickListener(v -> mFavouriteButton.setImageDrawable(itemView.getContext().getDrawable(android.R.drawable.star_big_on)));
+				mFavouriteButton.setOnClickListener(v -> mFavouriteButton.setImageDrawable(itemView.getResources().getDrawable(android.R.drawable.star_big_on)));
 			}
 		}
 	}

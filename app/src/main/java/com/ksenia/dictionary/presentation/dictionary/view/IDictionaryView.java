@@ -1,6 +1,7 @@
 package com.ksenia.dictionary.presentation.dictionary.view;
 
 import com.ksenia.dictionary.data.model.WordTranslationModel;
+import com.ksenia.dictionary.data.network.data.Language;
 
 import java.util.List;
 
@@ -10,9 +11,9 @@ import java.util.List;
 
 public interface IDictionaryView {
 
-	void addNewWord(String word, String langTo);
+	void clickNewWord(String word, Language langTo);
 
-	void setNewWord(WordTranslationModel word);
+	void addNewWord(WordTranslationModel word);
 
 	void updateWordList(List<WordTranslationModel> words);
 
