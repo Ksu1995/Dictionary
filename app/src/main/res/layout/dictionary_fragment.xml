@@ -35,7 +35,7 @@
 
         <EditText
             android:id="@+id/new_word"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -44,9 +44,10 @@
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/word_list"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:scrollbars="vertical"
+            app:layout_constraintHeight_default="wrap"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/new_word"

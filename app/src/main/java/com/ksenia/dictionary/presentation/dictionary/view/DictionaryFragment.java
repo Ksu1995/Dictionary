@@ -49,7 +49,6 @@ public class DictionaryFragment extends Fragment implements IDictionaryView, Sea
 	IDictionaryPresenter mDictionaryPresenter;
 
 	private List<WordTranslationModel> mWordList;
-	private List<WordTranslationModel> mFilteredWordList;
 	private WordListAdapter mWordListAdapter;
 	private RecyclerView mWordListRecyclerView;
 	private EditText mWordEditText;
@@ -86,7 +85,11 @@ public class DictionaryFragment extends Fragment implements IDictionaryView, Sea
 		mWordEditText = (EditText) view.findViewById(R.id.new_word);
 		mWordList = new ArrayList<>();
 		mWordListRecyclerView = (RecyclerView) view.findViewById(R.id.word_list);
-		mWordListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+		LinearLayoutManager mLayoutManager = new LinearLayoutManager(getContext());
+		mLayoutManager.setReverseLayout(true);
+		mLayoutManager.setStackFromEnd(true);
+		mWordListRecyclerView.setLayoutManager(mLayoutManager);
+
 		mWordListAdapter = new WordListAdapter(mWordList);
 		mWordListRecyclerView.setAdapter(mWordListAdapter);
 		mDictionaryPresenter.bindView(this);
@@ -139,6 +142,7 @@ public class DictionaryFragment extends Fragment implements IDictionaryView, Sea
 		mWordEditText.setText("");
 		mWordList.add(word);
 		mWordListAdapter.notifyDataSetChanged();
+		mWordListRecyclerView.scrollToPosition(mWordList.size() - 1);
 	}
 
 	@Override
@@ -181,7 +185,8 @@ public class DictionaryFragment extends Fragment implements IDictionaryView, Sea
 
 	class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.WordViewHolder> implements Filterable {
 
-		List<WordTranslationModel> mWordList;
+		private List<WordTranslationModel> mWordList;
+		private List<WordTranslationModel> mFilteredWordList;
 		private WordFilter mWordFilter;
 
 		WordListAdapter(List<WordTranslationModel> wordList) {
