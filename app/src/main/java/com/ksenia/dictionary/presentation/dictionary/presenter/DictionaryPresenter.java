@@ -3,6 +3,7 @@ package com.ksenia.dictionary.presentation.dictionary.presenter;
 import android.util.Log;
 
 import com.ksenia.dictionary.business.dictionary.IDictionaryInteractor;
+import com.ksenia.dictionary.data.model.WordTranslationModel;
 import com.ksenia.dictionary.data.network.data.Language;
 import com.ksenia.dictionary.presentation.dictionary.view.IDictionaryView;
 import com.ksenia.dictionary.utils.rx.IRxSchedulers;
@@ -35,8 +36,8 @@ public class DictionaryPresenter implements IDictionaryPresenter {
 	}
 
 	@Override
-	public void clickAddNewWord(String word, Language langTo) {
-		mDictionaryInteractor.getWordTranslation(word, langTo).subscribeOn(mRxSchedulers.getIOScheduler())
+	public void clickAddNewWord(String word, Language langTo, Language langFrom) {
+		mDictionaryInteractor.getWordTranslation(word, langTo, langFrom).subscribeOn(mRxSchedulers.getIOScheduler())
 				.observeOn(mRxSchedulers.getMainThreadScheduler())
 				.subscribe(wordTranslationWithResult -> {
 					if (wordTranslationWithResult.isInserted()) {
@@ -52,6 +53,14 @@ public class DictionaryPresenter implements IDictionaryPresenter {
 				.observeOn(mRxSchedulers.getMainThreadScheduler())
 				.subscribe(dictionary -> {
 					mDictionaryView.updateWordList(dictionary);
+				});
+	}
+
+	@Override
+	public void updateFavouriteInDictionaryItem(WordTranslationModel wordTranslationModel) {
+		mDictionaryInteractor.updateFavouriteInDictionaryItem(wordTranslationModel).subscribeOn(mRxSchedulers.getComputationScheduler())
+				.observeOn(mRxSchedulers.getMainThreadScheduler())
+				.subscribe(putResult -> {
 				});
 	}
 

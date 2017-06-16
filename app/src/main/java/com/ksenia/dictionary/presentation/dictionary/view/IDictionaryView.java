@@ -11,12 +11,14 @@ import java.util.List;
 
 public interface IDictionaryView {
 
-	void clickNewWord(String word, Language langTo);
+	void clickNewWord(String word, Language langTo, Language langFrom);
 
 	void addNewWord(WordTranslationModel word);
 
 	void updateWordList(List<WordTranslationModel> words);
 
 	void showError();
+
+	void addToFavourite(int position);
 
 }

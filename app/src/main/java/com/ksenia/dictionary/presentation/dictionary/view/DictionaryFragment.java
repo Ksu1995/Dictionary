@@ -1,6 +1,8 @@
 package com.ksenia.dictionary.presentation.dictionary.view;
 
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -8,12 +10,17 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -36,13 +43,15 @@ import javax.inject.Inject;
  * Created by Ksenia on 29.05.2017.
  */
 
-public class DictionaryFragment extends Fragment implements IDictionaryView {
+public class DictionaryFragment extends Fragment implements IDictionaryView, SearchView.OnQueryTextListener {
 
 	@Inject
 	IDictionaryPresenter mDictionaryPresenter;
 
 	private List<WordTranslationModel> mWordList;
+	private List<WordTranslationModel> mFilteredWordList;
 	private WordListAdapter mWordListAdapter;
+	private RecyclerView mWordListRecyclerView;
 	private EditText mWordEditText;
 	private Language mLangFrom;
 	private Language mLangTo;
@@ -50,7 +59,22 @@ public class DictionaryFragment extends Fragment implements IDictionaryView {
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setHasOptionsMenu(true);
 		MyApplication.get(getContext()).applicationComponent().plus(new DictionaryModule(), new BdModule(), new NetworkModule()).inject(this);
+	}
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.menu_main, menu);
+
+		// Get the SearchView and set the searchable configuration
+		SearchManager searchManager = (SearchManager) getContext().getSystemService(Context.SEARCH_SERVICE);
+		SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+		// Assumes current activity is the searchable activity
+		searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+		searchView.setSubmitButtonEnabled(true);
+		searchView.setOnQueryTextListener(this);
+		super.onCreateOptionsMenu(menu, inflater);
 	}
 
 	@Override
@@ -58,13 +82,13 @@ public class DictionaryFragment extends Fragment implements IDictionaryView {
 							 Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.dictionary_fragment, container, false);
 		FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
-		fab.setOnClickListener(view1 -> clickNewWord(mWordEditText.getText().toString(), mLangTo));
+		fab.setOnClickListener(view1 -> clickNewWord(mWordEditText.getText().toString(), mLangTo, mLangFrom));
 		mWordEditText = (EditText) view.findViewById(R.id.new_word);
 		mWordList = new ArrayList<>();
-		RecyclerView wordList = (RecyclerView) view.findViewById(R.id.word_list);
-		wordList.setLayoutManager(new LinearLayoutManager(getContext()));
+		mWordListRecyclerView = (RecyclerView) view.findViewById(R.id.word_list);
+		mWordListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 		mWordListAdapter = new WordListAdapter(mWordList);
-		wordList.setAdapter(mWordListAdapter);
+		mWordListRecyclerView.setAdapter(mWordListAdapter);
 		mDictionaryPresenter.bindView(this);
 		mDictionaryPresenter.loadDictionary();
 		Spinner langToSpinner = (Spinner) view.findViewById(R.id.langTo_spinner);
@@ -106,8 +130,8 @@ public class DictionaryFragment extends Fragment implements IDictionaryView {
 	}
 
 	@Override
-	public void clickNewWord(String word, Language langTo) {
-		mDictionaryPresenter.clickAddNewWord(word, langTo);
+	public void clickNewWord(String word, Language langTo, Language langFrom) {
+		mDictionaryPresenter.clickAddNewWord(word, langTo, langFrom);
 	}
 
 	@Override
@@ -129,12 +153,41 @@ public class DictionaryFragment extends Fragment implements IDictionaryView {
 				.setAction("Action", null).show();
 	}
 
-	class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.WordViewHolder> {
+	@Override
+	public void addToFavourite(int position) {
+		WordListAdapter.WordViewHolder holder = (WordListAdapter.WordViewHolder) mWordListRecyclerView.findViewHolderForAdapterPosition(position);
+		WordTranslationModel wordTranslationModel = mWordList.get(position);
+		WordTranslationModel updatedWordTranslationModel = WordTranslationModel.newWordTranslationModel(wordTranslationModel.getWord(),
+				wordTranslationModel.getTranslation(), wordTranslationModel.getLanguage(), !wordTranslationModel.isFavourite());
+		mWordList.set(position, updatedWordTranslationModel);
+		if (!wordTranslationModel.isFavourite()) {
+			holder.mFavouriteButton.setImageDrawable(getView().getResources().getDrawable(android.R.drawable.star_big_on));
+		} else {
+			holder.mFavouriteButton.setImageDrawable(getView().getResources().getDrawable(android.R.drawable.star_big_off));
+		}
+		mDictionaryPresenter.updateFavouriteInDictionaryItem(updatedWordTranslationModel);
+	}
+
+	@Override
+	public boolean onQueryTextSubmit(String query) {
+		return false;
+	}
+
+	@Override
+	public boolean onQueryTextChange(String newText) {
+		mWordListAdapter.getFilter().filter(newText);
+		return true;
+	}
+
+	class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.WordViewHolder> implements Filterable {
 
 		List<WordTranslationModel> mWordList;
+		private WordFilter mWordFilter;
 
 		WordListAdapter(List<WordTranslationModel> wordList) {
 			mWordList = wordList;
+			mFilteredWordList = mWordList;
+			getFilter();
 		}
 
 		@Override
@@ -145,13 +198,25 @@ public class DictionaryFragment extends Fragment implements IDictionaryView {
 
 		@Override
 		public void onBindViewHolder(WordViewHolder holder, int position) {
-			holder.mWord.setText(mWordList.get(position).getWord());
-			holder.mTranslation.setText(mWordList.get(position).getTranslation());
+			WordTranslationModel wordTranslationModel = mFilteredWordList.get(position);
+			holder.mWord.setText(wordTranslationModel.getWord());
+			holder.mTranslation.setText(wordTranslationModel.getTranslation());
+			if (wordTranslationModel.isFavourite()) {
+				holder.mFavouriteButton.setImageDrawable(getView().getResources().getDrawable(android.R.drawable.star_big_on));
+			}
 		}
 
 		@Override
 		public int getItemCount() {
-			return mWordList.size();
+			return mFilteredWordList.size();
+		}
+
+		@Override
+		public Filter getFilter() {
+			if (mWordFilter == null) {
+				mWordFilter = new WordFilter();
+			}
+			return mWordFilter;
 		}
 
 		class WordViewHolder extends RecyclerView.ViewHolder {
@@ -164,7 +229,41 @@ public class DictionaryFragment extends Fragment implements IDictionaryView {
 				mWord = (TextView) itemView.findViewById(R.id.person_name);
 				mTranslation = (TextView) itemView.findViewById(R.id.person_age);
 				mFavouriteButton = (ImageButton) itemView.findViewById(R.id.favorite);
-				mFavouriteButton.setOnClickListener(v -> mFavouriteButton.setImageDrawable(itemView.getResources().getDrawable(android.R.drawable.star_big_on)));
+				mFavouriteButton.setOnClickListener(v -> {
+					addToFavourite(getAdapterPosition());
+				});
+			}
+		}
+
+		private class WordFilter extends Filter {
+
+			@Override
+			protected FilterResults performFiltering(CharSequence constraint) {
+				FilterResults filterResults = new FilterResults();
+				if (constraint != null && constraint.length() > 0) {
+					ArrayList<WordTranslationModel> tempList = new ArrayList<>();
+
+					for (WordTranslationModel wordTranslationModel : mWordList) {
+						if (wordTranslationModel.getWord().toLowerCase().contains(constraint.toString().toLowerCase())) {
+							tempList.add(wordTranslationModel);
+						}
+					}
+
+					filterResults.count = tempList.size();
+					filterResults.values = tempList;
+				} else {
+					filterResults.count = mWordList.size();
+					filterResults.values = mWordList;
+				}
+
+				return filterResults;
+			}
+
+			@SuppressWarnings("unchecked")
+			@Override
+			protected void publishResults(CharSequence constraint, FilterResults results) {
+				mFilteredWordList = (ArrayList<WordTranslationModel>) results.values;
+				notifyDataSetChanged();
 			}
 		}
 	}

@@ -15,7 +15,7 @@ import rx.Single;
 
 public interface IDictionaryRepository {
 
-	Single<WordTranslation> getWordTranslation(String word, Language langTo);
+	Single<WordTranslation> getWordTranslation(String word, Language langTo, Language langFrom);
 
 	Single<PutResult> saveWordTranslation(WordTranslationModel wordTranslation);
 

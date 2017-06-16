@@ -30,8 +30,8 @@ public class DictionaryInteractor implements IDictionaryInteractor {
 	}
 
 	@Override
-	public Single<WordTranslationWithResult> getWordTranslation(@NonNull String word, Language langTo) {
-		return mDictionaryRepository.getWordTranslation(word, langTo).map(wordTranslation -> {
+	public Single<WordTranslationWithResult> getWordTranslation(@NonNull String word, Language langTo, Language langFrom) {
+		return mDictionaryRepository.getWordTranslation(word, langTo, langFrom).map(wordTranslation -> {
 			if (wordTranslation.getResponseCode() != 200) {
 				throw new DictionaryInteractorException("Response code = " + wordTranslation.getResponseCode());
 			} else {
@@ -58,5 +58,10 @@ public class DictionaryInteractor implements IDictionaryInteractor {
 	@Override
 	public Single<List<WordTranslationModel>> getDictionary() {
 		return mDictionaryRepository.getDictionary();
+	}
+
+	@Override
+	public Single<PutResult> updateFavouriteInDictionaryItem(WordTranslationModel wordTranslationModel) {
+		return mDictionaryRepository.saveWordTranslation(wordTranslationModel);
 	}
 }

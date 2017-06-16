@@ -37,29 +37,30 @@ public class DictionaryRepository implements IDictionaryRepository {
 	}
 
 	@Override
-	public Single<WordTranslation> getWordTranslation(String word, Language langTo) {
+	public Single<WordTranslation> getWordTranslation(String word, Language langTo, Language langFrom) {
 		return mDictionaryService
-				.translateWord("trnsl.1.1.20170530T132550Z.856fb0e22726f7be.6b55b7908badee4e4b7ebd4dd5ca03c824a438d2", word, langTo.getName());
+				.translateWord("trnsl.1.1.20170530T132550Z.856fb0e22726f7be.6b55b7908badee4e4b7ebd4dd5ca03c824a438d2",
+						word, langFrom.getName() + "-" + langTo.getName());
 	}
 
 	@Override
 	public Single<PutResult> saveWordTranslation(WordTranslationModel wordTranslation) {
 		return mStorIOSQLite.put()
 				.object(wordTranslation)
-                .prepare()
-                .asRxSingle();//.subscribe(putResult -> { putResult.wasInserted();});
+				.prepare()
+				.asRxSingle();
 	}
 
 	@Override
 	public Single<List<WordTranslationModel>> getDictionary() {
 		return mStorIOSQLite.get()
-                .listOfObjects(WordTranslationModel.class)
-                .withQuery(Query.builder()
-                        .table(DictionaryEntry.TABLE_NAME)
-                        //.where(DictionaryContract.DictionaryEntry.COLUMN_WORD + " = ?")
-                        //.whereArgs("and")
-                        .build())
-                .prepare()
-                .asRxSingle();
+				.listOfObjects(WordTranslationModel.class)
+				.withQuery(Query.builder()
+						.table(DictionaryEntry.TABLE_NAME)
+						//.where(DictionaryContract.DictionaryEntry.COLUMN_WORD + " = ?")
+						//.whereArgs("and")
+						.build())
+				.prepare()
+				.asRxSingle();
 	}
 }

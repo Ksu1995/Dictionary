@@ -37,13 +37,26 @@ public class WordTranslationModel {
 		return mTranslation;
 	}
 
+	public Language getLanguage() {
+		return mLang;
+	}
+
+	public boolean isFavourite() {
+		return mFavourite;
+	}
+
 	@NonNull
 	public static WordTranslationModel newWordTranslationModel(String word, String translation, Language language) {
+		return newWordTranslationModel(word, translation, language, false);
+	}
+
+	@NonNull
+	public static WordTranslationModel newWordTranslationModel(String word, String translation, Language language, boolean isFavourite) {
 		WordTranslationModel wordTranslationModel = new WordTranslationModel();
 		wordTranslationModel.mWord = word;
 		wordTranslationModel.mTranslation = translation;
 		wordTranslationModel.mLang = language;
-		wordTranslationModel.mFavourite = false;
+		wordTranslationModel.mFavourite = isFavourite;
 		return wordTranslationModel;
 	}
 

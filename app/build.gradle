@@ -30,10 +30,6 @@ android {
     }
 }
 
-/*retrolambda {
-    jdk System.getenv("JAVA8_HOME")
-}*/
-
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
